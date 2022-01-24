@@ -14,7 +14,7 @@ curl http://localhost:8080/users | json_pp
 curl http://localhost:8080/users \
     --header "Content-Type: application/json" \
     --request "POST" \
-    --data '{ "id": 1, "email": "mario1@mail.com", "password": "mario1" }' | json_pp
+    --data '{ "email": "mario1@mail.com", "password": "mario1" }'
 ```
 
 3, Obtener usuario por ID
@@ -37,4 +37,10 @@ curl http://localhost:8080/users \
 
 ```r
 curl http://localhost:8080/users/2 --request "DELETE"
+```
+
+6, Activar usuario
+
+```r
+curl http://localhost:8080/users/1/activate/XXX
 ```
