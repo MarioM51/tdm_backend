@@ -15,6 +15,7 @@ type IUserHadler interface {
 	update(c *gin.Context)
 	deleteById(c *gin.Context)
 	activate(c *gin.Context)
+	login(c *gin.Context)
 }
 
 type UserHadler struct {
@@ -32,11 +33,8 @@ func (_ UserHadler) getAll(c *gin.Context) {
 func (_ UserHadler) add(c *gin.Context) {
 	defer handleError(c)
 
-	var newUser UserModel
-	if err := c.BindJSON(&newUser); err != nil {
-		panic(err)
-	}
-	userAdded := usrServ.saveUser(newUser)
+	newUser := getUser(c)
+	userAdded := usrServ.saveUser(*newUser)
 	c.JSON(http.StatusCreated, userAdded)
 }
 
@@ -51,16 +49,16 @@ func (_ UserHadler) getById(c *gin.Context) {
 func (_ UserHadler) update(c *gin.Context) {
 	defer handleError(c)
 
-	var newInfo UserModel
-	if err := c.BindJSON(&newInfo); err != nil {
-		panic(err)
-	}
+	//TODO: Usar validacion
+	validteToken(c)
+
+	newInfo := getUser(c)
 	if newInfo.ID <= 0 {
 		panic(errorss.ErrorResponseModel{HttpStatus: 400, Cause: "El Id is obligatorio"})
 	}
-
-	userUpdated := usrServ.updateUser(&newInfo)
+	userUpdated := usrServ.updateUser(newInfo)
 	showUser(c, userUpdated)
+
 }
 
 func (_ UserHadler) deleteById(c *gin.Context) {
@@ -76,7 +74,7 @@ func (_ UserHadler) activate(c *gin.Context) {
 
 	id := getIntParam(c, "id")
 	code := c.Param("code")
-	err := usrServ.activate(uint(id), code)
+	var err *errorss.ErrorResponseModel = usrServ.activate(uint(id), code)
 	if err != nil {
 		c.JSON(err.HttpStatus, err)
 	} else {
@@ -85,10 +83,26 @@ func (_ UserHadler) activate(c *gin.Context) {
 
 }
 
+func (_ UserHadler) login(c *gin.Context) {
+	defer handleError(c)
+	toLoggin := getUser(c)
+
+	if toLoggin.Password == "" || toLoggin.Email == "" {
+		c.JSON(400, "Email and password are required")
+		return
+	}
+
+	token := usrServ.login(toLoggin)
+
+	c.JSON(200, map[string]string{
+		"token": token,
+	})
+}
+
 func handleError(c *gin.Context) {
 	if err := recover(); err != nil {
 
-		if errResp, ok := err.(*errorss.ErrorResponseModel); ok {
+		if errResp, ok := err.(errorss.ErrorResponseModel); ok {
 			c.JSON(errResp.HttpStatus, err)
 		} else {
 			fmt.Print(err)
@@ -96,4 +110,11 @@ func handleError(c *gin.Context) {
 		}
 
 	}
+}
+
+func getUser(c *gin.Context) (newInfo *UserModel) {
+	if err := c.BindJSON(&newInfo); err != nil {
+		panic(err)
+	}
+	return newInfo
 }

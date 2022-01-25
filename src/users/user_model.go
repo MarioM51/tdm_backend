@@ -10,8 +10,8 @@ import (
 type UserModel struct {
 	gorm.Model
 	Email          string    `json:"email"`
-	Password       string    `json:"password"`
-	LastLogin      time.Time `json:"last_login"`
+	Password       string    `json:"password,omitempty"`
+	LastLogin      time.Time `json:"last_login,omitempty"`
 	ActivationHash string    `json:"-"`
 }
 

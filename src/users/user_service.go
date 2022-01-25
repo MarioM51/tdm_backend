@@ -18,10 +18,14 @@ type IUserService interface {
 	deleteUser(id uint) *UserModel
 
 	activate(id uint, code string) *errorss.ErrorResponseModel
+
+	login(toLoggin *UserModel) (token string)
 }
 
 type UserService struct {
 }
+
+var badCredential = &errorss.ErrorResponseModel{HttpStatus: 401, Cause: "Bad credentials"}
 
 var userRepo IUserRepository = UserRepository{}
 
@@ -31,7 +35,7 @@ func (_ UserService) findAll() *[]UserModel {
 
 func (_ UserService) saveUser(newUser UserModel) *UserModel {
 
-	plain, hash := crypto.GenerateToken()
+	plain, hash := crypto.GenerateRandomHash()
 	Logger.LogF(true, "Activation code:", plain)
 	newUser.ActivationHash = hash
 
@@ -50,7 +54,7 @@ func (uServ UserService) updateUser(newInfo *UserModel) *UserModel {
 	if oldUser == nil {
 		panic(errorss.ErrorResponseModel{
 			HttpStatus: 404,
-			Cause:      fmt.Sprintf("User id %v not found", newInfo.ID),
+			Cause:      "User not found",
 		})
 	}
 
@@ -62,11 +66,9 @@ func (uServ UserService) deleteUser(id uint) *UserModel {
 }
 
 func (uServ UserService) activate(id uint, code string) *errorss.ErrorResponseModel {
-	errResp := &errorss.ErrorResponseModel{HttpStatus: 401, Cause: "Bad credentials"}
-
 	userFinded := uServ.findUserById(id)
 	if userFinded == nil {
-		return errResp
+		return badCredential
 	}
 
 	if userFinded.ActivationHash == "_" {
@@ -80,7 +82,27 @@ func (uServ UserService) activate(id uint, code string) *errorss.ErrorResponseMo
 		userRepo.updateUser(userFinded, &UserModel{ActivationHash: "_"})
 		return nil
 	} else {
-		return errResp
+		return badCredential
 	}
 
+}
+
+func (uServ UserService) login(toLoggin *UserModel) (token string) {
+	userFinded := userRepo.findByEmail(toLoggin.Email)
+	if userFinded == nil {
+		panic(badCredential)
+	}
+
+	if userFinded.ActivationHash != "_" {
+		panic(errorss.ErrorResponseModel{HttpStatus: 401, Cause: "Email validation requied"})
+	}
+
+	isMatch := crypto.PasswordMatches(userFinded.Password, toLoggin.Password)
+	if !isMatch {
+		panic(badCredential)
+	}
+
+	token = crypto.GenerateToken(fmt.Sprint(userFinded.ID))
+
+	return token
 }

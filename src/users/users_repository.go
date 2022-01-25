@@ -11,6 +11,7 @@ type IUserRepository interface {
 	findUserById(id uint) *UserModel
 	updateUser(oldUser *UserModel, newInfo *UserModel) *UserModel
 	deleteUser(id uint) *UserModel
+	findByEmail(email string) *UserModel
 }
 
 type UserRepository struct {
@@ -34,12 +35,20 @@ func (ur UserRepository) saveUser(newUser *UserModel) *UserModel {
 }
 
 func (ur UserRepository) findAll() (allUsers *[]UserModel) {
-	db.Find(&allUsers)
+	db.Last(&allUsers)
 	return allUsers
 }
 
 func (ur UserRepository) findUserById(id uint) (userFinded *UserModel) {
-	db.Find(&userFinded, id)
+	db.Last(&userFinded, id)
+	return userFinded
+}
+
+func (ur UserRepository) findByEmail(email string) (userFinded *UserModel) {
+	db.Where("Email = ?", email).Last(&userFinded)
+	if userFinded.ID == 0 || userFinded.Email == "" {
+		return nil
+	}
 	return userFinded
 }
 

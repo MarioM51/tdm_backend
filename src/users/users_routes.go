@@ -16,4 +16,5 @@ func AddRoutes(r *gin.Engine) {
 	r.GET("/users/:id", userHandler.getById)
 	r.DELETE("/users/:id", userHandler.deleteById)
 	r.GET("/users/:id/activate/:code", userHandler.activate)
+	r.POST("/users/login", userHandler.login)
 }

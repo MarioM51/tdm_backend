@@ -28,9 +28,10 @@ curl http://localhost:8080/users/1
 ```r
 curl http://localhost:8080/users \
     --include \
-    --header "Content-Type: application/json" \
     --request "PUT" \
-    --data '{ "id": 1, "email": "Train2", "password": "Coltrane2" }'
+    --header "Content-Type: application/json" \
+    --header "token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDMwNzU5NzQsImlzcyI6IjQifQ.KZQ71teq3y5mm8bb7hPBZJxmZX99o7bp2EsL4pAkE5Q" \
+    --data '{ "id": 1, "email": "Train2" }'
 ```
 
 5, Eliminar un usuarrio
@@ -43,4 +44,13 @@ curl http://localhost:8080/users/2 --request "DELETE"
 
 ```r
 curl http://localhost:8080/users/1/activate/XXX
+```
+
+7, Login
+
+```r
+curl http://localhost:8080/users/login \
+    --header "Content-Type: application/json" \
+    --request "POST" \
+    --data '{ "email": "mario3@mail.com", "password": "mario3" }'
 ```
