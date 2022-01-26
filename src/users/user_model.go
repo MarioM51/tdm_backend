@@ -9,10 +9,16 @@ import (
 
 type UserModel struct {
 	gorm.Model
-	Email          string    `json:"email"`
-	Password       string    `json:"password,omitempty"`
-	LastLogin      time.Time `json:"last_login,omitempty"`
-	ActivationHash string    `json:"-"`
+	Email          string      `json:"email"`
+	Password       string      `json:"password,omitempty"`
+	LastLogin      time.Time   `json:"last_login,omitempty"`
+	ActivationHash string      `json:"-"`
+	Roles          []RoleModel `gorm:"many2many:user_roles;"`
+}
+
+type RoleModel struct {
+	gorm.Model
+	Name string `gorm:"unique"`
 }
 
 func (user UserModel) string() string {

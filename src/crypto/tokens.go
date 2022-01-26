@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"encoding/base32"
 	"errors"
+	"strconv"
 	"time"
 	"users_api/src/errorss"
 
@@ -13,6 +14,10 @@ import (
 
 const added_secret = "treeVerde"
 const token_secret = "temporal"
+
+type TokenModel struct {
+	IdUser uint
+}
 
 func GenerateRandomHash() (plainText string, hash string) {
 
@@ -72,8 +77,8 @@ func GetHash(plainText string) string {
 func GenerateToken(id string) string {
 
 	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
-		Issuer:    id,
-		ExpiresAt: time.Now().Add(time.Hour * 1).Unix(),
+		Id:        id,
+		ExpiresAt: time.Now().Add(time.Minute * 10).Unix(),
 	})
 
 	token, err := claims.SignedString([]byte(token_secret))
@@ -84,20 +89,55 @@ func GenerateToken(id string) string {
 	return token
 }
 
-func ParseToken(plainToken string) interface{} {
-	invalidToken := &errorss.ErrorResponseModel{HttpStatus: 401, Cause: "invalid token"}
+func ParseToken(plainToken string) *TokenModel {
 
-	token, err := jwt.Parse(plainToken, func(token *jwt.Token) (interface{}, error) {
+	rawToken, err := jwt.Parse(plainToken, func(token *jwt.Token) (interface{}, error) {
 		return []byte(token_secret), nil
 	})
 
-	if err != nil {
-		panic(errorss.ErrorResponseModel{HttpStatus: 500, Cause: "error validating token"})
+	errMsg := ""
+	if ve, ok := err.(*jwt.ValidationError); ok {
+		if ve.Errors&jwt.ValidationErrorMalformed != 0 {
+			errMsg = "token wrong format"
+		} else if ve.Errors&(jwt.ValidationErrorExpired|jwt.ValidationErrorNotValidYet) != 0 {
+			errMsg = "Token expired"
+		} else {
+			errMsg = "Token invalid: A"
+		}
 	}
 
-	if !token.Valid {
-		panic(invalidToken)
-	} else {
-		return token.Claims
+	if errMsg != "" {
+		panic(errorss.ErrorResponseModel{HttpStatus: 401, Cause: errMsg})
 	}
+
+	if !rawToken.Valid {
+		panic(errorss.ErrorResponseModel{HttpStatus: 401, Cause: "Token invalid: B"})
+	}
+
+	token, errMsgGetInfo := getInfoFromClaims(rawToken)
+	if errMsgGetInfo != "" {
+		panic(errorss.ErrorResponseModel{HttpStatus: 401, Cause: "Error getting info from token" + errMsgGetInfo})
+	}
+
+	return token
+}
+
+func getInfoFromClaims(rawToken *jwt.Token) (*TokenModel, string) {
+	if claims, ok := rawToken.Claims.(jwt.MapClaims); !ok {
+		return nil, ": a1"
+	} else {
+		if idUserSt, ok := claims["jti"].(string); !ok {
+			return nil, ": a2"
+		} else {
+			if idUser, err := strconv.Atoi(idUserSt); err != nil {
+				return nil, ": a3"
+			} else {
+				idUserU := uint(idUser)
+				token := TokenModel{IdUser: idUserU}
+				return &token, ""
+			}
+		}
+
+	}
+
 }

@@ -9,13 +9,13 @@ import (
 type IUserService interface {
 	findAll() *[]UserModel
 
-	saveUser(newUser UserModel) *UserModel
+	save(newUser UserModel) *UserModel
 
-	findUserById(id uint) *UserModel
+	findById(id uint) *UserModel
 
-	updateUser(newInfo *UserModel) *UserModel
+	update(newInfo *UserModel) *UserModel
 
-	deleteUser(id uint) *UserModel
+	delete(id uint) *UserModel
 
 	activate(id uint, code string) *errorss.ErrorResponseModel
 
@@ -25,15 +25,16 @@ type IUserService interface {
 type UserService struct {
 }
 
-var badCredential = &errorss.ErrorResponseModel{HttpStatus: 401, Cause: "Bad credentials"}
-
 var userRepo IUserRepository = UserRepository{}
+
+var badCredential = errorss.ErrorResponseModel{HttpStatus: 401, Cause: "Bad credentials"}
+var userNotFound = errorss.ErrorResponseModel{HttpStatus: 404, Cause: "User not found"}
 
 func (_ UserService) findAll() *[]UserModel {
 	return userRepo.findAll()
 }
 
-func (_ UserService) saveUser(newUser UserModel) *UserModel {
+func (_ UserService) save(newUser UserModel) *UserModel {
 
 	plain, hash := crypto.GenerateRandomHash()
 	Logger.LogF(true, "Activation code:", plain)
@@ -45,30 +46,34 @@ func (_ UserService) saveUser(newUser UserModel) *UserModel {
 	return userRepo.saveUser(&newUser)
 }
 
-func (_ UserService) findUserById(id uint) *UserModel {
+func (_ UserService) findById(id uint) *UserModel {
 	return userRepo.findUserById(id)
 }
 
-func (uServ UserService) updateUser(newInfo *UserModel) *UserModel {
-	oldUser := uServ.findUserById(newInfo.ID)
+func (uServ UserService) update(newInfo *UserModel) *UserModel {
+	oldUser := uServ.findById(newInfo.ID)
 	if oldUser == nil {
-		panic(errorss.ErrorResponseModel{
-			HttpStatus: 404,
-			Cause:      "User not found",
-		})
+		panic(userNotFound)
 	}
 
 	return userRepo.updateUser(oldUser, newInfo)
 }
 
-func (uServ UserService) deleteUser(id uint) *UserModel {
-	return userRepo.deleteUser(id)
+func (uServ UserService) delete(id uint) *UserModel {
+	toDel := uServ.findById(id)
+	if toDel == nil {
+		panic(userNotFound)
+	}
+
+	userRepo.deleteUser(toDel.ID)
+
+	return toDel
 }
 
 func (uServ UserService) activate(id uint, code string) *errorss.ErrorResponseModel {
-	userFinded := uServ.findUserById(id)
+	userFinded := uServ.findById(id)
 	if userFinded == nil {
-		return badCredential
+		return &badCredential
 	}
 
 	if userFinded.ActivationHash == "_" {
@@ -82,7 +87,7 @@ func (uServ UserService) activate(id uint, code string) *errorss.ErrorResponseMo
 		userRepo.updateUser(userFinded, &UserModel{ActivationHash: "_"})
 		return nil
 	} else {
-		return badCredential
+		return &badCredential
 	}
 
 }
@@ -93,7 +98,7 @@ func (uServ UserService) login(toLoggin *UserModel) (token string) {
 		panic(badCredential)
 	}
 
-	if userFinded.ActivationHash != "_" {
+	if userFinded.ActivationHash != "_" && userFinded.ActivationHash != "" {
 		panic(errorss.ErrorResponseModel{HttpStatus: 401, Cause: "Email validation requied"})
 	}
 

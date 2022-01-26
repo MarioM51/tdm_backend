@@ -1,7 +1,6 @@
 package users
 
 import (
-	"fmt"
 	"net/http"
 	"users_api/src/errorss"
 
@@ -22,9 +21,13 @@ type UserHadler struct {
 }
 
 var usrServ IUserService = UserService{}
+var unauthUserMsg = errorss.ErrorResponseModel{HttpStatus: 403, Cause: "User Unauthorized"}
 
 func (_ UserHadler) getAll(c *gin.Context) {
 	defer handleError(c)
+	if !checkRol(c, "admin") {
+		panic(unauthUserMsg)
+	}
 
 	allUsers := usrServ.findAll()
 	c.JSON(http.StatusOK, allUsers)
@@ -34,38 +37,44 @@ func (_ UserHadler) add(c *gin.Context) {
 	defer handleError(c)
 
 	newUser := getUser(c)
-	userAdded := usrServ.saveUser(*newUser)
+	userAdded := usrServ.save(*newUser)
 	c.JSON(http.StatusCreated, userAdded)
 }
 
 func (_ UserHadler) getById(c *gin.Context) {
 	defer handleError(c)
+	if !checkRol(c, "admin") {
+		panic(unauthUserMsg)
+	}
 
 	id := getIntParam(c, "id")
-	userFinded := usrServ.findUserById(uint(id))
+	userFinded := usrServ.findById(uint(id))
 	showUser(c, userFinded)
 }
 
 func (_ UserHadler) update(c *gin.Context) {
 	defer handleError(c)
-
-	//TODO: Usar validacion
-	validteToken(c)
+	if !checkRol(c, "admin") {
+		panic(unauthUserMsg)
+	}
 
 	newInfo := getUser(c)
 	if newInfo.ID <= 0 {
-		panic(errorss.ErrorResponseModel{HttpStatus: 400, Cause: "El Id is obligatorio"})
+		panic(errorss.ErrorResponseModel{HttpStatus: 400, Cause: "Id required"})
 	}
-	userUpdated := usrServ.updateUser(newInfo)
+	userUpdated := usrServ.update(newInfo)
 	showUser(c, userUpdated)
 
 }
 
 func (_ UserHadler) deleteById(c *gin.Context) {
 	defer handleError(c)
+	if !checkRol(c, "admin") {
+		panic(unauthUserMsg)
+	}
 
 	id := getIntParam(c, "id")
-	userFinded := usrServ.deleteUser(uint(id))
+	userFinded := usrServ.delete(uint(id))
 	showUser(c, userFinded)
 }
 
@@ -78,7 +87,9 @@ func (_ UserHadler) activate(c *gin.Context) {
 	if err != nil {
 		c.JSON(err.HttpStatus, err)
 	} else {
-		c.JSON(http.StatusOK, "")
+		c.JSON(http.StatusOK, map[string]string{
+			"msg": "user activated",
+		})
 	}
 
 }
@@ -97,24 +108,4 @@ func (_ UserHadler) login(c *gin.Context) {
 	c.JSON(200, map[string]string{
 		"token": token,
 	})
-}
-
-func handleError(c *gin.Context) {
-	if err := recover(); err != nil {
-
-		if errResp, ok := err.(errorss.ErrorResponseModel); ok {
-			c.JSON(errResp.HttpStatus, err)
-		} else {
-			fmt.Print(err)
-			c.JSON(500, errorss.ErrorResponseModel{HttpStatus: 500, Cause: "Error, intente mas tarde"})
-		}
-
-	}
-}
-
-func getUser(c *gin.Context) (newInfo *UserModel) {
-	if err := c.BindJSON(&newInfo); err != nil {
-		panic(err)
-	}
-	return newInfo
 }
