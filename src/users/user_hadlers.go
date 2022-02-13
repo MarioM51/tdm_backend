@@ -103,9 +103,8 @@ func (_ UserHadler) login(c *gin.Context) {
 		return
 	}
 
-	token := usrServ.login(toLoggin)
+	token, user := usrServ.login(toLoggin)
 
-	c.JSON(200, map[string]string{
-		"token": token,
-	})
+	c.Writer.Header().Set("Token", token)
+	showUser(c, user)
 }

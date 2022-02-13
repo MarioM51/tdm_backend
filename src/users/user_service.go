@@ -19,7 +19,7 @@ type IUserService interface {
 
 	activate(id uint, code string) *errorss.ErrorResponseModel
 
-	login(toLoggin *UserModel) (token string)
+	login(toLoggin *UserModel) (token string, user *UserModel)
 }
 
 type UserService struct {
@@ -27,7 +27,7 @@ type UserService struct {
 
 var userRepo IUserRepository = UserRepository{}
 
-var badCredential = errorss.ErrorResponseModel{HttpStatus: 401, Cause: "Bad credentials"}
+var badCredentials = errorss.ErrorResponseModel{HttpStatus: 400, Cause: "Bad credentials"}
 var userNotFound = errorss.ErrorResponseModel{HttpStatus: 404, Cause: "User not found"}
 
 func (_ UserService) findAll() *[]UserModel {
@@ -73,7 +73,7 @@ func (uServ UserService) delete(id uint) *UserModel {
 func (uServ UserService) activate(id uint, code string) *errorss.ErrorResponseModel {
 	userFinded := uServ.findById(id)
 	if userFinded == nil {
-		return &badCredential
+		return &badCredentials
 	}
 
 	if userFinded.ActivationHash == "_" {
@@ -87,27 +87,27 @@ func (uServ UserService) activate(id uint, code string) *errorss.ErrorResponseMo
 		userRepo.updateUser(userFinded, &UserModel{ActivationHash: "_"})
 		return nil
 	} else {
-		return &badCredential
+		return &badCredentials
 	}
 
 }
 
-func (uServ UserService) login(toLoggin *UserModel) (token string) {
+func (uServ UserService) login(toLoggin *UserModel) (token string, user *UserModel) {
 	userFinded := userRepo.findByEmail(toLoggin.Email)
 	if userFinded == nil {
-		panic(badCredential)
+		panic(badCredentials)
 	}
 
 	if userFinded.ActivationHash != "_" && userFinded.ActivationHash != "" {
-		panic(errorss.ErrorResponseModel{HttpStatus: 401, Cause: "Email validation requied"})
+		panic(errorss.ErrorResponseModel{HttpStatus: 400, Cause: "Email validation requied"})
 	}
 
 	isMatch := crypto.PasswordMatches(userFinded.Password, toLoggin.Password)
 	if !isMatch {
-		panic(badCredential)
+		panic(badCredentials)
 	}
 
 	token = crypto.GenerateToken(fmt.Sprint(userFinded.ID))
 
-	return token
+	return token, userFinded
 }

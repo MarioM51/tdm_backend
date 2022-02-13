@@ -5,7 +5,7 @@
 1, Consultar todos los usuarios, get all
 
 ```r
-curl http://localhost:8080/users \
+curl http://localhost:8081/users \
     --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDMyMjQ0ODIsImp0aSI6Ijc5In0.1tLAnb-bsj7uJ0YREcNZoMf6MxXezvC5JGfggn9HxzI" \
     | json_pp
 ```
@@ -13,7 +13,7 @@ curl http://localhost:8080/users \
 2, Agregar un usuario
 
 ```r
-curl http://localhost:8080/users \
+curl http://localhost:8081/users \
     --header "Content-Type: application/json" \
     --request "POST" \
     --data '{ "email": "mario1@email.com", "password": "mario1" }'
@@ -22,7 +22,7 @@ curl http://localhost:8080/users \
 3, Obtener usuario por ID
 
 ```r
-curl http://localhost:8080/users/80 \
+curl http://localhost:8081/users/80 \
   --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDMyMjQ0ODIsImp0aSI6Ijc5In0.1tLAnb-bsj7uJ0YREcNZoMf6MxXezvC5JGfggn9HxzI" \
   | json_pp
 ```
@@ -30,7 +30,7 @@ curl http://localhost:8080/users/80 \
 4, Modificar un usuarrio
 
 ```r
-curl http://localhost:8080/users \
+curl http://localhost:8081/users \
     --include \
     --request "PUT" \
     --header "Content-Type: application/json" \
@@ -41,21 +41,22 @@ curl http://localhost:8080/users \
 5, Eliminar un usuarrio
 
 ```r
-curl http://localhost:8080/users/80 --request "DELETE" \
+curl http://localhost:8081/users/80 --request "DELETE" \
   --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDMyMjQ0ODIsImp0aSI6Ijc5In0.1tLAnb-bsj7uJ0YREcNZoMf6MxXezvC5JGfggn9HxzI"
 ```
 
 6, Activar usuario
 
 ```r
-curl http://localhost:8080/users/1/activate/XXX
+curl http://localhost:8081/users/1/activate/XXX
 ```
 
 7, Login
 
 ```r
-curl http://localhost:8080/users/login \
-    --header "Content-Type: application/json" \
-    --request "POST" \
-    --data '{ "email": "mario2@email.com", "password": "mario2" }'
+curl http://localhost:8081/users/login \
+  --include \
+  --header "Content-Type: application/json" \
+  --request "POST" \
+  --data '{ "email": "mario2@email.com", "password": "mario2" }'
 ```

@@ -13,7 +13,7 @@ type UserModel struct {
 	Password       string      `json:"password,omitempty"`
 	LastLogin      time.Time   `json:"last_login,omitempty"`
 	ActivationHash string      `json:"-"`
-	Roles          []RoleModel `gorm:"many2many:user_roles;"`
+	Rols           []RoleModel `gorm:"many2many:user_roles;" json:"rols"`
 }
 
 type RoleModel struct {

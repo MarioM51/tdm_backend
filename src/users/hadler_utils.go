@@ -62,8 +62,8 @@ func checkRol(c *gin.Context, rolToSearch string) bool {
 	token := getToken(c)
 	userLogged := usrServ.findById(token.IdUser)
 	roleFounded := false
-	for i := range userLogged.Roles {
-		if userLogged.Roles[i].Name == rolToSearch {
+	for i := range userLogged.Rols {
+		if userLogged.Rols[i].Name == rolToSearch {
 			roleFounded = true
 			break
 		}
