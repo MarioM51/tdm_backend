@@ -20,6 +20,8 @@ type IUserService interface {
 	activate(id uint, code string) *errorss.ErrorResponseModel
 
 	login(toLoggin *UserModel) (token string, user *UserModel)
+
+	CheckRol(rolToSearch []string, token *crypto.TokenModel) bool
 }
 
 type UserService struct {
@@ -30,11 +32,11 @@ var userRepo IUserRepository = UserRepository{}
 var badCredentials = errorss.ErrorResponseModel{HttpStatus: 400, Cause: "Bad credentials"}
 var userNotFound = errorss.ErrorResponseModel{HttpStatus: 404, Cause: "User not found"}
 
-func (_ UserService) findAll() *[]UserModel {
+func (UserService) findAll() *[]UserModel {
 	return userRepo.findAll()
 }
 
-func (_ UserService) save(newUser UserModel) *UserModel {
+func (UserService) save(newUser UserModel) *UserModel {
 
 	plain, hash := crypto.GenerateRandomHash()
 	Logger.LogF(true, "Activation code:", plain)
@@ -46,7 +48,7 @@ func (_ UserService) save(newUser UserModel) *UserModel {
 	return userRepo.saveUser(&newUser)
 }
 
-func (_ UserService) findById(id uint) *UserModel {
+func (UserService) findById(id uint) *UserModel {
 	return userRepo.findUserById(id)
 }
 
@@ -110,4 +112,16 @@ func (uServ UserService) login(toLoggin *UserModel) (token string, user *UserMod
 	token = crypto.GenerateToken(fmt.Sprint(userFinded.ID))
 
 	return token, userFinded
+}
+
+func (uServ UserService) CheckRol(rolToSearch []string, token *crypto.TokenModel) bool {
+	userLogged := usrServ.findById(token.IdUser)
+	for i := range userLogged.Rols {
+		for k := range rolToSearch {
+			if userLogged.Rols[i].Name == rolToSearch[k] {
+				return true
+			}
+		}
+	}
+	return false
 }

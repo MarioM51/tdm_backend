@@ -2,6 +2,7 @@ package main
 
 import (
 	"time"
+	"users_api/src/product"
 	"users_api/src/users"
 
 	"github.com/gin-contrib/cors"
@@ -9,7 +10,8 @@ import (
 )
 
 func main() {
-	users.InitDB()
+	users.CreateUserSchema()
+	product.CreateProductSchema()
 
 	router := gin.Default()
 	router.Use(cors.New(cors.Config{
@@ -22,5 +24,7 @@ func main() {
 	}))
 
 	users.AddRoutes(router)
+	product.AddRoutes(router)
+
 	router.Run("localhost:8081")
 }

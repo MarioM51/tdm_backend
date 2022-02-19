@@ -1,7 +1,6 @@
 package users
 
 import (
-	"fmt"
 	"time"
 
 	"gorm.io/gorm"
@@ -21,7 +20,9 @@ type RoleModel struct {
 	Name string `gorm:"unique"`
 }
 
-func (user UserModel) string() string {
+/*
+func (user UserModel) String() string {
 	return fmt.Sprintf("ID: %v, email: %v, Pass: %v, ActivationHash: %v, LastLogin: %v.",
 		user.ID, user.Email, user.Password, user.ActivationHash, user.LastLogin)
 }
+*/

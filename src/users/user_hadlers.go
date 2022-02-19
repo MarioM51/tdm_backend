@@ -3,6 +3,7 @@ package users
 import (
 	"net/http"
 	"users_api/src/errorss"
+	"users_api/src/helpers"
 
 	"github.com/gin-gonic/gin"
 )
@@ -21,41 +22,47 @@ type UserHadler struct {
 }
 
 var usrServ IUserService = UserService{}
-var unauthUserMsg = errorss.ErrorResponseModel{HttpStatus: 403, Cause: "User Unauthorized"}
+var apiHelper = helpers.ApiHelper{}
 
-func (_ UserHadler) getAll(c *gin.Context) {
-	defer handleError(c)
-	if !checkRol(c, "admin") {
-		panic(unauthUserMsg)
+func (UserHadler) getAll(c *gin.Context) {
+	defer apiHelper.HandleError(c)
+
+	token := apiHelper.GetToken(c)
+	if !usrServ.CheckRol([]string{"admin"}, token) {
+		panic(errorss.UnAuthUser)
 	}
 
 	allUsers := usrServ.findAll()
 	c.JSON(http.StatusOK, allUsers)
 }
 
-func (_ UserHadler) add(c *gin.Context) {
-	defer handleError(c)
+func (UserHadler) add(c *gin.Context) {
+	defer apiHelper.HandleError(c)
 
 	newUser := getUser(c)
 	userAdded := usrServ.save(*newUser)
 	c.JSON(http.StatusCreated, userAdded)
 }
 
-func (_ UserHadler) getById(c *gin.Context) {
-	defer handleError(c)
-	if !checkRol(c, "admin") {
-		panic(unauthUserMsg)
+func (UserHadler) getById(c *gin.Context) {
+	defer apiHelper.HandleError(c)
+
+	token := apiHelper.GetToken(c)
+	if !usrServ.CheckRol([]string{"admin"}, token) {
+		panic(errorss.UnAuthUser)
 	}
 
-	id := getIntParam(c, "id")
+	id := apiHelper.GetIntParam(c, "id")
 	userFinded := usrServ.findById(uint(id))
 	showUser(c, userFinded)
 }
 
-func (_ UserHadler) update(c *gin.Context) {
-	defer handleError(c)
-	if !checkRol(c, "admin") {
-		panic(unauthUserMsg)
+func (UserHadler) update(c *gin.Context) {
+	defer apiHelper.HandleError(c)
+
+	token := apiHelper.GetToken(c)
+	if !usrServ.CheckRol([]string{"admin"}, token) {
+		panic(errorss.UnAuthUser)
 	}
 
 	newInfo := getUser(c)
@@ -67,21 +74,23 @@ func (_ UserHadler) update(c *gin.Context) {
 
 }
 
-func (_ UserHadler) deleteById(c *gin.Context) {
-	defer handleError(c)
-	if !checkRol(c, "admin") {
-		panic(unauthUserMsg)
+func (UserHadler) deleteById(c *gin.Context) {
+	defer apiHelper.HandleError(c)
+
+	token := apiHelper.GetToken(c)
+	if !usrServ.CheckRol([]string{"admin"}, token) {
+		panic(errorss.UnAuthUser)
 	}
 
-	id := getIntParam(c, "id")
+	id := apiHelper.GetIntParam(c, "id")
 	userFinded := usrServ.delete(uint(id))
 	showUser(c, userFinded)
 }
 
-func (_ UserHadler) activate(c *gin.Context) {
-	defer handleError(c)
+func (UserHadler) activate(c *gin.Context) {
+	defer apiHelper.HandleError(c)
 
-	id := getIntParam(c, "id")
+	id := apiHelper.GetIntParam(c, "id")
 	code := c.Param("code")
 	var err *errorss.ErrorResponseModel = usrServ.activate(uint(id), code)
 	if err != nil {
@@ -94,8 +103,8 @@ func (_ UserHadler) activate(c *gin.Context) {
 
 }
 
-func (_ UserHadler) login(c *gin.Context) {
-	defer handleError(c)
+func (UserHadler) login(c *gin.Context) {
+	defer apiHelper.HandleError(c)
 	toLoggin := getUser(c)
 
 	if toLoggin.Password == "" || toLoggin.Email == "" {
@@ -107,4 +116,20 @@ func (_ UserHadler) login(c *gin.Context) {
 
 	c.Writer.Header().Set("Token", token)
 	showUser(c, user)
+}
+
+func showUser(c *gin.Context, user *UserModel) {
+	if user != nil {
+		user.Password = ""
+		c.JSON(http.StatusOK, &user)
+	} else {
+		c.JSON(http.StatusNotFound, gin.H{"message": "user not found"})
+	}
+}
+
+func getUser(c *gin.Context) (newInfo *UserModel) {
+	if err := c.BindJSON(&newInfo); err != nil {
+		panic(err)
+	}
+	return newInfo
 }
