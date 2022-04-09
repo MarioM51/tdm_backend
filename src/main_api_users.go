@@ -2,6 +2,7 @@ package main
 
 import (
 	"time"
+	"users_api/src/blog"
 	"users_api/src/product"
 	"users_api/src/users"
 
@@ -12,6 +13,7 @@ import (
 func main() {
 	users.CreateUserSchema()
 	product.CreateProductSchema()
+	blog.CreateBlogSchema()
 
 	router := gin.Default()
 	router.Use(cors.New(cors.Config{
@@ -25,6 +27,9 @@ func main() {
 
 	users.AddRoutes(router)
 	product.AddRoutes(router)
+	blog.AddRoutes(router)
+
+	router.Static("/admin", "./public")
 
 	router.Run("localhost:8081")
 }

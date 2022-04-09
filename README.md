@@ -1,13 +1,12 @@
-# Users API
+# Tienda
 
-- [Users API](#users-api)
-  - [Introduccion](#introduccion)
-    - [Api Usuarios = Auth](#api-usuarios--auth)
-    - [Api Productos](#api-productos)
+- [Tienda](#tienda)
+  - [Api Usuarios = Auth](#api-usuarios--auth)
+  - [Api Productos](#api-productos)
+    - [SPA: Panel de administracion](#spa-panel-de-administracion)
 
-## Introduccion
 
-### Api Usuarios = Auth
+## Api Usuarios = Auth
 
 1, Consultar todos los usuarios, get all
 
@@ -68,7 +67,7 @@ curl http://localhost:8081/users/login \
   --data '{ "email": "mario2@email.com", "password": "mario2" }'
 ```
 
-### Api Productos
+## Api Productos
 
 1, get All products
 
@@ -108,4 +107,12 @@ curl http://localhost:8081/products/3 \
   --request "DELETE" \
   --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDUyNDM0NjEsImp0aSI6IjgyIn0.zTMVlrAwRMpaKtXqUu1-foFwqXaWdvYNlU8C05VLCHY" \
   --include
+```
+
+### SPA: Panel de administracion
+
+Peticion con el navegador
+
+```r
+http://localhost:8081/admin
 ```
