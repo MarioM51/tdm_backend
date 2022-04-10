@@ -4,14 +4,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func AddRoutes(r *gin.Engine) {
+func AddApiRoutes(r *gin.Engine, prefix string) {
 
 	blogHandler := BlogHandler{}
 
-	r.GET("/blogs", blogHandler.findAll)
-	r.GET("/blogs/:id", blogHandler.findById)
-	r.POST("/blogs", blogHandler.save)
-	r.PUT("/blogs", blogHandler.update)
-	r.DELETE("/blogs/:id", blogHandler.deleteById)
+	r.GET(prefix+"/api/blogs", blogHandler.findAll)
+	r.GET(prefix+"/blogs/:id", blogHandler.findById)
+	r.POST(prefix+"/blogs", blogHandler.save)
+	r.PUT(prefix+"/blogs", blogHandler.update)
+	r.DELETE(prefix+"/blogs/:id", blogHandler.deleteById)
 
 }

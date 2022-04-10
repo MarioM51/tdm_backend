@@ -11,7 +11,7 @@
 1, Consultar todos los usuarios, get all
 
 ```r
-curl http://localhost:8081/users \
+curl http://localhost:8081/api/users \
     --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDUyMTQ0ODMsImp0aSI6Ijc5In0.jfiR0soCJat9zn1d1grNERc3_BW39vtz41b9qDoxyq4" \
     | json_pp
 ```
@@ -19,7 +19,7 @@ curl http://localhost:8081/users \
 2, Agregar un usuario
 
 ```r
-curl http://localhost:8081/users \
+curl http://localhost:8081/api/users \
     --header "Content-Type: application/json" \
     --request "POST" \
     --data '{ "email": "mario1@email.com", "password": "mario1" }'
@@ -28,7 +28,7 @@ curl http://localhost:8081/users \
 3, Obtener usuario por ID
 
 ```r
-curl http://localhost:8081/users/80 \
+curl http://localhost:8081/api/users/80 \
   --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDMyMjQ0ODIsImp0aSI6Ijc5In0.1tLAnb-bsj7uJ0YREcNZoMf6MxXezvC5JGfggn9HxzI" \
   | json_pp
 ```
@@ -36,7 +36,7 @@ curl http://localhost:8081/users/80 \
 4, Modificar un usuarrio
 
 ```r
-curl http://localhost:8081/users \
+curl http://localhost:8081/api/users \
     --include \
     --request "PUT" \
     --header "Content-Type: application/json" \
@@ -47,20 +47,20 @@ curl http://localhost:8081/users \
 5, Eliminar un usuarrio
 
 ```r
-curl http://localhost:8081/users/80 --request "DELETE" \
+curl http://localhost:8081/api/users/80 --request "DELETE" \
   --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDMyMjQ0ODIsImp0aSI6Ijc5In0.1tLAnb-bsj7uJ0YREcNZoMf6MxXezvC5JGfggn9HxzI"
 ```
 
 6, Activar usuario
 
 ```r
-curl http://localhost:8081/users/1/activate/XXX
+curl http://localhost:8081/api/users/1/activate/XXX
 ```
 
 7, Login
 
 ```r
-curl http://localhost:8081/users/login \
+curl http://localhost:8081/api/users/login \
   --include \
   --header "Content-Type: application/json" \
   --request "POST" \
@@ -72,7 +72,7 @@ curl http://localhost:8081/users/login \
 1, get All products
 
 ```r
-curl http://localhost:8081/products \
+curl http://localhost:8081/api/products \
   --request "GET" | json_pp
 ```
 
@@ -81,7 +81,7 @@ curl http://localhost:8081/products \
 - id product will be ignored
 
 ```r
-curl http://localhost:8081/products \
+curl http://localhost:8081/api/products \
   --request "POST" \
   --include \
   --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDUyNDM0NjEsImp0aSI6IjgyIn0.zTMVlrAwRMpaKtXqUu1-foFwqXaWdvYNlU8C05VLCHY" \
@@ -93,7 +93,7 @@ curl http://localhost:8081/products \
 - In the payload the id product is required
 
 ```r
-curl http://localhost:8081/products \
+curl http://localhost:8081/api/products \
   --request "PUT" \
   --include \
   --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDUyNDM0NjEsImp0aSI6IjgyIn0.zTMVlrAwRMpaKtXqUu1-foFwqXaWdvYNlU8C05VLCHY" \
@@ -103,7 +103,7 @@ curl http://localhost:8081/products \
 4, delete a product by id
 
 ```r
-curl http://localhost:8081/products/3 \
+curl http://localhost:8081/api/products/3 \
   --request "DELETE" \
   --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDUyNDM0NjEsImp0aSI6IjgyIn0.zTMVlrAwRMpaKtXqUu1-foFwqXaWdvYNlU8C05VLCHY" \
   --include
@@ -114,5 +114,5 @@ curl http://localhost:8081/products/3 \
 Peticion con el navegador
 
 ```r
-http://localhost:8081/admin
+http://localhost:8081/api/admin
 ```

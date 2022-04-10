@@ -9,12 +9,12 @@ import (
 var userHandler IUserHadler = UserHadler{}
 var Logger = logs.New(false)
 
-func AddRoutes(r *gin.Engine) {
-	r.GET("/users", userHandler.getAll)
-	r.POST("/users", userHandler.add)
-	r.PUT("/users", userHandler.update)
-	r.GET("/users/:id", userHandler.getById)
-	r.DELETE("/users/:id", userHandler.deleteById)
-	r.GET("/users/:id/activate/:code", userHandler.activate)
-	r.POST("/users/login", userHandler.login)
+func AddApiRoutes(r *gin.Engine, prefix string) {
+	r.GET(prefix+"/users", userHandler.getAll)
+	r.POST(prefix+"/users", userHandler.add)
+	r.PUT(prefix+"/users", userHandler.update)
+	r.GET(prefix+"/users/:id", userHandler.getById)
+	r.DELETE(prefix+"/users/:id", userHandler.deleteById)
+	r.GET(prefix+"/users/:id/activate/:code", userHandler.activate)
+	r.POST(prefix+"/users/login", userHandler.login)
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"time"
 	"users_api/src/blog"
+	"users_api/src/helpers"
 	"users_api/src/product"
 	"users_api/src/users"
 
@@ -11,11 +12,17 @@ import (
 )
 
 func main() {
+	//Setup database
 	users.CreateUserSchema()
 	product.CreateProductSchema()
 	blog.CreateBlogSchema()
 
 	router := gin.Default()
+
+	//Setup static server
+	router.Static("/admin", "./public")
+
+	//Setup Cors
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:  []string{"*"},
 		AllowMethods:  []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
@@ -25,11 +32,16 @@ func main() {
 		MaxAge: 12 * time.Hour,
 	}))
 
-	users.AddRoutes(router)
-	product.AddRoutes(router)
-	blog.AddRoutes(router)
+	//Setup Api
+	const apiPrefix string = "/api"
+	users.AddApiRoutes(router, apiPrefix)
+	product.AddApiRoutes(router, apiPrefix)
+	blog.AddApiRoutes(router, apiPrefix)
 
-	router.Static("/admin", "./public")
+	//Setup server side rendering
+	templatesM := []helpers.TemplateModel{}
+	product.AddSsrRoutes(router, &templatesM)
+	router.HTMLRender = helpers.CreateHTMLRenderHelper(templatesM)
 
 	router.Run("localhost:8081")
 }
