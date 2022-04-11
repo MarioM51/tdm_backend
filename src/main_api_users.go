@@ -20,7 +20,8 @@ func main() {
 	router := gin.Default()
 
 	//Setup static server
-	router.Static("/admin", "./public")
+	router.Static("/admin", "./public/admin-spa")
+	router.Static("/static", "./public/static")
 
 	//Setup Cors
 	router.Use(cors.New(cors.Config{

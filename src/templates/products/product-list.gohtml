@@ -9,7 +9,7 @@
 
     <h2 class="mt-5">All products</h2>
     <hr>
-
+    <wc-test></wc-test>
     <table id="sales-table" class="table table-zebra">
         <thead>
             <tr>
@@ -26,6 +26,7 @@
 {{end}}
 
 {{define "js"}}
+<script defer src='/static/web_components/wc-test.js'></script>
 <script>
   console.log("Hi from list products")
 </script>

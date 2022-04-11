@@ -19,6 +19,7 @@ func (ProductSsrHadler) findAll(c *gin.Context) {
 	allProductsJSONLD := ProductModelToArrayJSONLD(*allProducts)
 
 	c.HTML(http.StatusOK, "product-list", gin.H{"PRODUCTS_JSONLD": allProductsJSONLD.Val})
+
 }
 
 func (ProductSsrHadler) findDetails(c *gin.Context) {
