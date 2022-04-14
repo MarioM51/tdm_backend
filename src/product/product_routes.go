@@ -14,6 +14,9 @@ func AddApiRoutes(r *gin.Engine, prefix string) {
 	r.POST(prefix+"/products", productApi.add)
 	r.PUT(prefix+"/products", productApi.update)
 	r.DELETE(prefix+"/products/:id", productApi.delete)
+
+	r.POST(prefix+"/products/:id/images", productApi.saveImage)
+	r.GET(prefix+"/products/image/:id", productApi.showImage)
 }
 
 func AddSsrRoutes(r *gin.Engine, tModels *[]helpers.TemplateModel) {

@@ -1,7 +1,11 @@
 package helpers
 
 import (
+	"bufio"
+	"encoding/base64"
 	"fmt"
+	"io/ioutil"
+	"mime/multipart"
 	"strconv"
 	"users_api/src/crypto"
 	"users_api/src/errorss"
@@ -42,4 +46,23 @@ func (ApiHelper) GetToken(c *gin.Context) *crypto.TokenModel {
 	plainToken := headerToken[0]
 	token := crypto.ParseToken(plainToken)
 	return token
+}
+
+func (ApiHelper) FileMultiPartToBase64(file *multipart.FileHeader) *string {
+	f, err := file.Open()
+	if err != nil {
+		panic("file to base64 open fail")
+	}
+
+	// Read entire file into byte slice.
+	reader := bufio.NewReader(f)
+	content, err2 := ioutil.ReadAll(reader)
+	if err2 != nil {
+		panic("file to base64 transform fail")
+	}
+
+	// Encode as base64.
+	base64Result := base64.StdEncoding.EncodeToString(content)
+
+	return &base64Result
 }

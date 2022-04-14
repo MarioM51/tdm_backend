@@ -1,13 +1,24 @@
 package product
 
-import "strconv"
+import (
+	"strconv"
+	"time"
+)
 
 type ProductModel struct {
-	Id          int    `json:"id"`
-	Name        string `json:"name"`
-	Price       int    `json:"price"`
-	Image       string `json:"image"`
-	Description string `json:"description"`
+	ID          int          `json:"id" gorm:"primaryKey"`
+	Name        string       `json:"name"`
+	Price       int          `json:"price"`
+	Description string       `json:"description" gorm:"size:60"`
+	Image       ProductImage `json:"image,omitempty" gorm:"foreignKey:ID"`
+}
+
+type ProductImage struct {
+	ID        int       `json:"id_product" gorm:"primaryKey"`
+	MimeType  string    `json:"mime_type,omitempty" gorm:"size:15"`
+	Base64    string    `json:"base64,omitempty"`
+	CreatedAt time.Time `json:"-"`
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
 }
 
 /*
@@ -22,9 +33,9 @@ func ProductModelToArrayJSONLD(products []ProductModel) ProductsWrapperJSONLD {
 	for _, p := range products {
 		productListA = append(productListA, ProductJSONLD{
 			Type:        "Product",
-			Identifier:  strconv.Itoa(p.Id),
+			Identifier:  strconv.Itoa(p.ID),
 			Url:         "/nothing",
-			Image:       p.Image,
+			Image:       "/nothing_yet",
 			Name:        p.Name,
 			Description: p.Description,
 			Offer:       Offer{Type: "Offer", Price: strconv.Itoa(p.Price), PriceCurrency: "MXN"},

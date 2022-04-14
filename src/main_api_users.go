@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"time"
 	"users_api/src/blog"
 	"users_api/src/helpers"
@@ -18,6 +19,8 @@ func main() {
 	blog.CreateBlogSchema()
 
 	router := gin.Default()
+	gin.DisableConsoleColor()
+	gin.DefaultWriter = os.Stdout
 
 	//Setup static server
 	router.Static("/admin", "./public/admin-spa")

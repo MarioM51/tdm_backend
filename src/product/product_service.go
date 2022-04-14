@@ -13,6 +13,14 @@ func (ProductService) findAll() (all *[]ProductModel) {
 
 func (ProductService) save(toSave *ProductModel) (saved *ProductModel) {
 	saved = productDao.save(toSave)
+	if saved.ID == 0 {
+		panic(errorss.ErrorResponseModel{HttpStatus: 500, Cause: "Error saving product"})
+	}
+	return saved
+}
+
+func (ProductService) saveImage(idProduct int, toSave *ProductImage) (saved *ProductImage) {
+	saved = productDao.saveImage(idProduct, toSave)
 	return saved
 }
 
@@ -25,12 +33,21 @@ func (ProductService) findById(id int) (finded *ProductModel) {
 	return finded
 }
 
+func (ProductService) findImageByProductId(id int) (finded *ProductImage) {
+	finded = productDao.findImageByProductId(id)
+	if finded == nil {
+		panic(errorss.ErrorResponseModel{HttpStatus: 404, Cause: "Product Image not found"})
+	}
+
+	return finded
+}
+
 func (ps ProductService) update(newInfo *ProductModel) (updated *ProductModel) {
-	if newInfo.Id <= 0 {
+	if newInfo.ID <= 0 {
 		panic(errorss.ErrorResponseModel{HttpStatus: 400, Cause: "id required and must be greater than 0"})
 	}
 
-	oldInfo := ps.findById(newInfo.Id)
+	oldInfo := ps.findById(newInfo.ID)
 
 	updated = productDao.update(oldInfo, newInfo)
 	return updated
