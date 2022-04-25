@@ -124,6 +124,7 @@ func (ProductApiHadler) showImage(c *gin.Context) {
 
 	c.Writer.Header().Set("Content-Type", "image/jpeg")
 	c.Writer.Header().Set("Content-Length", strconv.Itoa(len(imagebytes)))
+	c.Writer.Header().Set("Cache-Control", "max-age=604800")
 	_, err2 := c.Writer.Write(imagebytes)
 	if err2 != nil {
 		panic("Displaying image error")

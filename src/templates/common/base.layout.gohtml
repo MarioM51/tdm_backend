@@ -1,30 +1,34 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
   <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{block "title" .}}{{end}}</title>
+    <link href="/static/tailwin.css" rel="stylesheet" type="text/css" />
+
+    <style>
+      :root {
+        --max-screen: 1250px;
+      }
+      html, body {
+        height: 100%;
+        background-color: lightgrey;
+      }
+      .root-container {
+        margin: 0 auto;
+        max-width: var(--max-screen);
+        background-color: white;
+        height: 100%;
+      }
+    </style>
   </head>
   <body>
 
-  <header class="">
-    Navegacion
-  </header>
-
-  <div class="container">
-      <div class="row">
-          <div class="col">
-              {{block "content" .}} {{end}}
-          </div>
-      </div>
+  <div class="root-container">
+    {{block "content" .}} {{end}}
   </div>
 
-  <script src="/nothing.js"></script>
-    
-  <script>
-    console.log("Hi from layout")
-  </script>
   {{block "js" .}}
   {{end}}
 </body>

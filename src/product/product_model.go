@@ -32,13 +32,14 @@ func ProductModelToArrayJSONLD(products []ProductModel) ProductsWrapperJSONLD {
 	var productListA = []ProductJSONLD{}
 	for _, p := range products {
 		productListA = append(productListA, ProductJSONLD{
-			Type:        "Product",
-			Identifier:  strconv.Itoa(p.ID),
-			Url:         "/nothing",
-			Image:       "/nothing_yet",
-			Name:        p.Name,
-			Description: p.Description,
-			Offer:       Offer{Type: "Offer", Price: strconv.Itoa(p.Price), PriceCurrency: "MXN"},
+			Type:           "Product",
+			Identifier:     strconv.Itoa(p.ID),
+			Url:            "/nothing",
+			Image:          "/nothing_yet",
+			ImageUpdatedAt: p.Image.UpdatedAt.Format(time.RFC3339),
+			Name:           p.Name,
+			Description:    p.Description,
+			Offer:          Offer{Type: "Offer", Price: strconv.Itoa(p.Price), PriceCurrency: "MXN"},
 		})
 	}
 
@@ -65,13 +66,14 @@ type ProductsJSONLD struct {
 }
 
 type ProductJSONLD struct {
-	Type        string `json:"@type"`
-	Identifier  string `json:"identifier"`
-	Url         string `json:"url"`
-	Image       string `json:"image"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Offer       Offer  `json:"offers"`
+	Type           string `json:"@type"`
+	Identifier     string `json:"identifier"`
+	Url            string `json:"url"`
+	Image          string `json:"image"`
+	ImageUpdatedAt string `json:"image_updated_at"`
+	Name           string `json:"name"`
+	Description    string `json:"description"`
+	Offer          Offer  `json:"offers"`
 }
 
 type Offer struct {

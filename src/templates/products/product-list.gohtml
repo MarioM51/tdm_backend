@@ -1,32 +1,17 @@
-{{template "base" .}}
-
 {{define "title"}}
     Products
 {{end}}
 
 {{define "content"}}
     <script id="products_jsonld" type="application/ld+json">{{.PRODUCTS_JSONLD}}</script>
-
-    <h2 class="mt-5">All products</h2>
-    <hr>
-    <wc-test></wc-test>
-    <table id="sales-table" class="table table-zebra">
-        <thead>
-            <tr>
-                <th></th>
-                <th>Image</th>
-                <th>Name</th>
-                <th>Description</th>
-            </tr>
-        </thead>
-        <tbody>
-
-        </tbody>
-    </table>
+    <wc-layout>
+        <wc-product-store-page id="content-page"></wc-product-store-page>
+    </wc-layout>
 {{end}}
 
 {{define "js"}}
-<script defer src='/static/web_components/wc-test.js'></script>
+<script defer src='/static/web_components/wc-layout.js'></script>
+<script defer src='/static/web_components/wc-product-store-page.js'></script>
 <script>
   console.log("Hi from list products")
 </script>
