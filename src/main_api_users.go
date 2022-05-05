@@ -45,6 +45,7 @@ func main() {
 	//Setup server side rendering
 	templatesM := []helpers.TemplateModel{}
 	product.AddSsrRoutes(router, &templatesM)
+	blog.AddSsrRoutes(router, &templatesM)
 	router.HTMLRender = helpers.CreateHTMLRenderHelper(templatesM)
 
 	router.Run("localhost:8081")

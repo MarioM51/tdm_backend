@@ -2,6 +2,7 @@ package blog
 
 import (
 	"net/http"
+	"strings"
 	"users_api/src/errorss"
 	"users_api/src/helpers"
 	"users_api/src/users"
@@ -12,6 +13,7 @@ import (
 type IBlogHandler interface {
 	findAll(c *gin.Context)
 	findById(c *gin.Context)
+	showThumbnail(c *gin.Context)
 	save(c *gin.Context)
 	update(c *gin.Context)
 	deleteById(c *gin.Context)
@@ -34,8 +36,21 @@ func (BlogHandler) findById(c *gin.Context) {
 	defer apiHelper.HandleError(c)
 	idBlog := apiHelper.GetIntParam(c, "id")
 	finded := blogS.findById(idBlog)
+	finded.Thumbnail = ""
 
 	showBlog(c, finded)
+}
+
+func (BlogHandler) showThumbnail(c *gin.Context) {
+	defer apiHelper.HandleError(c)
+
+	idBlog := apiHelper.GetIntParam(c, "id")
+	finded := blogS.findById(idBlog)
+
+	cut := strings.Index(finded.Thumbnail, ",") + 1
+	base := finded.Thumbnail[cut:len(finded.Thumbnail)]
+
+	apiHelper.ShowImageInBase64(c, base)
 }
 
 func (BlogHandler) save(c *gin.Context) {
@@ -81,7 +96,7 @@ func (BlogHandler) deleteById(c *gin.Context) {
 
 func getBlogFromRequest(c *gin.Context) (b *BlogModel) {
 	if err := c.BindJSON(&b); err != nil {
-		panic(errorss.ErrorResponseModel{HttpStatus: 400, Cause: "Product json bad format"})
+		panic(errorss.ErrorResponseModel{HttpStatus: 400, Cause: "bad format of blog json"})
 	}
 	return b
 }

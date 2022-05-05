@@ -1,10 +1,8 @@
 package product
 
 import (
-	"encoding/base64"
 	"encoding/json"
 	"net/http"
-	"strconv"
 	"strings"
 	"users_api/src/errorss"
 	"users_api/src/helpers"
@@ -115,21 +113,8 @@ func (ProductApiHadler) showImage(c *gin.Context) {
 
 	id := apiHelper.GetIntParam(c, "id")
 	finded := productServ.findImageByProductId(id)
-	base64String := finded.Base64
 
-	imagebytes, err := base64.StdEncoding.DecodeString(base64String)
-	if err != nil {
-		panic("Error decoding image")
-	}
-
-	c.Writer.Header().Set("Content-Type", "image/jpeg")
-	c.Writer.Header().Set("Content-Length", strconv.Itoa(len(imagebytes)))
-	c.Writer.Header().Set("Cache-Control", "max-age=604800")
-	_, err2 := c.Writer.Write(imagebytes)
-	if err2 != nil {
-		panic("Displaying image error")
-	}
-
+	apiHelper.ShowImageInBase64(c, finded.Base64)
 }
 
 //=================

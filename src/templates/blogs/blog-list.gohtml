@@ -1,0 +1,15 @@
+{{define "title"}}Blogs{{end}}
+
+{{define "content"}}
+  <script id="blogs_jsonld" type="application/ld+json">
+    {{.BLOGS_JSONLD}}
+  </script>
+  <wc-layout>
+    <wc-blog-list-page id="content-page"></wc-blog-list-page>
+  </wc-layout>
+{{end}}
+
+{{define "js"}}
+  <script defer src='/static/web_components/wc-layout.js'></script>
+  <script defer src='/static/web_components/wc-blog-list-page.js'></script>
+{{end}}

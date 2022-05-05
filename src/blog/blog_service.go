@@ -35,6 +35,7 @@ func (BlogService) save(newBlog *BlogModel) *BlogModel {
 	if errMsg != "" {
 		panic(errorss.ErrorResponseModel{HttpStatus: 400, Cause: errMsg})
 	}
+	newBlog.Author = "Temp"
 	blogSaved := blogRepo.save(newBlog)
 	return blogSaved
 }

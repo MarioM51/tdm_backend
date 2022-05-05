@@ -27,8 +27,7 @@ func CreateBlogSchema() {
 
 func (BlogRepository) findAll() *[]BlogModel {
 	all := &[]BlogModel{}
-	//dbHelper.DB.Select("id", "title", "autor", "created_at", "updated_at").Find(&all)
-	dbHelper.DB.Find(&all)
+	dbHelper.DB.Select("id", "title", "author", "author", "abstract", "created_at", "updated_at").Find(&all)
 	return all
 }
 

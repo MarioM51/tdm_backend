@@ -66,3 +66,18 @@ func (ApiHelper) FileMultiPartToBase64(file *multipart.FileHeader) *string {
 
 	return &base64Result
 }
+
+func (ApiHelper) ShowImageInBase64(c *gin.Context, imageBase64 string) {
+	imagebytes, err := base64.StdEncoding.DecodeString(imageBase64)
+	if err != nil {
+		panic("Error decoding image")
+	}
+
+	c.Writer.Header().Set("Content-Type", "image/jpeg")
+	c.Writer.Header().Set("Content-Length", strconv.Itoa(len(imagebytes)))
+	c.Writer.Header().Set("Cache-Control", "max-age=604800")
+	_, err2 := c.Writer.Write(imagebytes)
+	if err2 != nil {
+		panic("Displaying image error")
+	}
+}
