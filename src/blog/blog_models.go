@@ -12,6 +12,7 @@ type BlogModel struct {
 	Thumbnail string    `json:"thumbnail,omitempty"`
 	Author    string    `json:"author" gorm:"not null"`
 	Abstract  string    `json:"abstract" gorm:"not null;size:130"`
+	Likes     int       `json:"likes" gorm:"-:all"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
@@ -27,6 +28,14 @@ func (b BlogModel) validate() string {
 
 	return ""
 }
+
+type LikeBlog struct {
+	FkBlog    int       `json:"fk_blog"`
+	FKUser    int       `json:"fk_user"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
+// json-ld
 
 func BlogModelToArrayJSONLD(blogsM []BlogModel) BlogsWrapperJSONLD {
 

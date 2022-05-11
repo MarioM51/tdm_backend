@@ -17,6 +17,9 @@ type IBlogHandler interface {
 	save(c *gin.Context)
 	update(c *gin.Context)
 	deleteById(c *gin.Context)
+
+	addLike(c *gin.Context)
+	removeLike(c *gin.Context)
 }
 
 type BlogHandler struct {
@@ -56,7 +59,7 @@ func (BlogHandler) showThumbnail(c *gin.Context) {
 func (BlogHandler) save(c *gin.Context) {
 	defer apiHelper.HandleError(c)
 
-	token := apiHelper.GetToken(c)
+	token := apiHelper.GetRequiredToken(c)
 	if !usrServ.CheckRol([]string{"blogs", "admin"}, token) {
 		panic(errorss.UnAuthUser)
 	}
@@ -69,7 +72,7 @@ func (BlogHandler) save(c *gin.Context) {
 func (BlogHandler) update(c *gin.Context) {
 	defer apiHelper.HandleError(c)
 
-	token := apiHelper.GetToken(c)
+	token := apiHelper.GetRequiredToken(c)
 	if !usrServ.CheckRol([]string{"blogs", "admin"}, token) {
 		panic(errorss.UnAuthUser)
 	}
@@ -82,7 +85,7 @@ func (BlogHandler) update(c *gin.Context) {
 func (BlogHandler) deleteById(c *gin.Context) {
 	defer apiHelper.HandleError(c)
 
-	token := apiHelper.GetToken(c)
+	token := apiHelper.GetRequiredToken(c)
 	if !usrServ.CheckRol([]string{"blogs", "admin"}, token) {
 		panic(errorss.UnAuthUser)
 	}
@@ -107,4 +110,28 @@ func showBlog(c *gin.Context, p *BlogModel) {
 	} else {
 		c.JSON(http.StatusNotFound, gin.H{"message": "blog not found"})
 	}
+}
+
+func (BlogHandler) addLike(c *gin.Context) {
+	defer apiHelper.HandleError(c)
+
+	token := apiHelper.GetOptionalToken(c)
+
+	idBlog := apiHelper.GetIntParam(c, "id")
+
+	likesCount := blogS.addLike(idBlog, int(token.IdUser))
+
+	c.JSON(http.StatusNotFound, gin.H{"likes": likesCount})
+}
+
+func (BlogHandler) removeLike(c *gin.Context) {
+	defer apiHelper.HandleError(c)
+
+	token := apiHelper.GetOptionalToken(c)
+
+	idBlog := apiHelper.GetIntParam(c, "id")
+
+	likesCount := blogS.removeLike(idBlog, int(token.IdUser))
+
+	c.JSON(http.StatusNotFound, gin.H{"likes": likesCount})
 }

@@ -18,6 +18,8 @@ type IProductApiHadler interface {
 	update(c *gin.Context)
 	saveImage(c *gin.Context)
 	showImage(c *gin.Context)
+	addLike(c *gin.Context)
+	removeLike(c *gin.Context)
 }
 
 type ProductApiHadler struct {
@@ -38,7 +40,7 @@ func (ProductApiHadler) findAll(c *gin.Context) {
 func (ProductApiHadler) add(c *gin.Context) {
 	defer apiHelper.HandleError(c)
 
-	token := apiHelper.GetToken(c)
+	token := apiHelper.GetRequiredToken(c)
 	if !usrServ.CheckRol([]string{"products", "admin"}, token) {
 		panic(errorss.UnAuthUser)
 	}
@@ -53,7 +55,7 @@ func (ProductApiHadler) add(c *gin.Context) {
 func (ProductApiHadler) delete(c *gin.Context) {
 	defer apiHelper.HandleError(c)
 
-	token := apiHelper.GetToken(c)
+	token := apiHelper.GetRequiredToken(c)
 	if !usrServ.CheckRol([]string{"products", "admin"}, token) {
 		panic(errorss.UnAuthUser)
 	}
@@ -68,7 +70,7 @@ func (ProductApiHadler) delete(c *gin.Context) {
 func (ProductApiHadler) update(c *gin.Context) {
 	defer apiHelper.HandleError(c)
 
-	token := apiHelper.GetToken(c)
+	token := apiHelper.GetRequiredToken(c)
 	if !usrServ.CheckRol([]string{"products", "admin"}, token) {
 		panic(errorss.UnAuthUser)
 	}
@@ -138,4 +140,30 @@ func showProduct(c *gin.Context, p *ProductModel) {
 	} else {
 		c.JSON(http.StatusNotFound, gin.H{"message": "product not found"})
 	}
+}
+
+// likes
+
+func (ProductApiHadler) addLike(c *gin.Context) {
+	defer apiHelper.HandleError(c)
+
+	token := apiHelper.GetOptionalToken(c)
+
+	id := apiHelper.GetIntParam(c, "id")
+
+	likesCount := productServ.addLike(id, int(token.IdUser))
+
+	c.JSON(http.StatusNotFound, gin.H{"likes": likesCount})
+}
+
+func (ProductApiHadler) removeLike(c *gin.Context) {
+	defer apiHelper.HandleError(c)
+
+	token := apiHelper.GetOptionalToken(c)
+
+	id := apiHelper.GetIntParam(c, "id")
+
+	likesCount := productServ.removeLike(id, int(token.IdUser))
+
+	c.JSON(http.StatusNotFound, gin.H{"likes": likesCount})
 }

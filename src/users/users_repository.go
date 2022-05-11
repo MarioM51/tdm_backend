@@ -31,6 +31,9 @@ func CreateUserSchema() {
 	adminUser := UserModel{Model: gorm.Model{ID: 79}, Email: "mario2@email.com", Rols: []RoleModel{{Model: gorm.Model{ID: 79}}}, Password: "$2a$12$OenFL4B1HRFZasAuL2my5.PNJ2GRR4wLl1BUDH2vl0ZBeU2Dv3.Gq"}
 	dbHelper.DB.Clauses(clause.OnConflict{DoNothing: true}).Create(&adminRole)
 	dbHelper.DB.Clauses(clause.OnConflict{DoNothing: true}).Create(&adminUser)
+
+	anonUser := UserModel{Model: gorm.Model{ID: 1}, Email: "anon@email.com", Password: "$2a$12$OenFL4B1HRFZasAuL2my5.PNJ2GRR4wLl1BUDH2vl0ZBeU2Dv3.Gq"}
+	dbHelper.DB.Clauses(clause.OnConflict{DoNothing: true}).Create(&anonUser)
 }
 
 func (ur UserRepository) saveUser(newUser *UserModel) *UserModel {

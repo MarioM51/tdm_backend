@@ -89,7 +89,7 @@ func GenerateToken(id string) string {
 	return token
 }
 
-func ParseToken(plainToken string) *TokenModel {
+func ParseRequiredToken(plainToken string) *TokenModel {
 
 	rawToken, err := jwt.Parse(plainToken, func(token *jwt.Token) (interface{}, error) {
 		return []byte(token_secret), nil
@@ -118,6 +118,17 @@ func ParseToken(plainToken string) *TokenModel {
 	if errMsgGetInfo != "" {
 		panic(errorss.ErrorResponseModel{HttpStatus: 401, Cause: "Error getting info from token" + errMsgGetInfo})
 	}
+
+	return token
+}
+
+func ParseOptionalToken(plainToken string) *TokenModel {
+
+	rawToken, _ := jwt.Parse(plainToken, func(token *jwt.Token) (interface{}, error) {
+		return []byte(token_secret), nil
+	})
+
+	token, _ := getInfoFromClaims(rawToken)
 
 	return token
 }

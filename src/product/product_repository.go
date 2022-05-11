@@ -17,15 +17,17 @@ func CreateProductSchema() {
 
 	dbHelper.DB.AutoMigrate(&ProductImage{})
 	dbHelper.DB.AutoMigrate(&ProductModel{})
+	dbHelper.DB.AutoMigrate(&LikeProduct{})
 }
 
-func (ProductRepository) findAll() *[]ProductModel {
+func (pr ProductRepository) findAll() *[]ProductModel {
 	allProducts := []ProductModel{}
 	dbHelper.DB.Find(&allProducts)
 
+	//add image struct only with the id
 	var ids []int
-	for _, v := range allProducts {
-		ids = append(ids, v.ID)
+	for i := range allProducts {
+		ids = append(ids, allProducts[i].ID)
 	}
 	allImages := []ProductImage{}
 	dbHelper.DB.Select("id, updated_at").Find(&allImages, ids)
@@ -38,6 +40,14 @@ func (ProductRepository) findAll() *[]ProductModel {
 		}
 	}
 
+	//add num of likes
+
+	for i := range allProducts {
+		likes := pr.findAllLikesOfProduct(allProducts[i].ID)
+		countLikes := len(likes)
+		allProducts[i].Likes = countLikes
+	}
+
 	return &allProducts
 }
 
@@ -46,6 +56,41 @@ func (ProductRepository) save(toSave *ProductModel) *ProductModel {
 	toSave.Image = ProductImage{}
 	dbHelper.DB.Omit(clause.Associations).Create(toSave)
 	return toSave
+}
+
+func (pr ProductRepository) findById(id int) (finded *ProductModel) {
+	finded = &ProductModel{}
+	dbHelper.DB.Find(finded, id)
+	if finded.ID <= 0 {
+		return nil
+	}
+
+	likes := pr.findAllLikesOfProduct(finded.ID)
+	countLikes := len(likes)
+	finded.Likes = countLikes
+
+	return finded
+}
+
+func (ProductRepository) delete(toDelete *ProductModel) *ProductModel {
+	dbHelper.DB.Delete(toDelete)
+	return toDelete
+}
+
+func (ProductRepository) update(oldInfo, newInfo *ProductModel) *ProductModel {
+	dbHelper.DB.Model(&oldInfo).Updates(&newInfo)
+	return newInfo
+}
+
+//=========images
+
+func (ProductRepository) findImageByProductId(id int) *ProductImage {
+	productFinded := &ProductModel{}
+	dbHelper.DB.Preload(_IMAGE_ASO).Find(productFinded, id)
+	if productFinded.ID <= 0 || productFinded.Image.ID <= 0 {
+		return nil
+	}
+	return &productFinded.Image
 }
 
 func (ProductRepository) saveImage(idProduct int, newImage *ProductImage) *ProductImage {
@@ -60,27 +105,38 @@ func (ProductRepository) saveImage(idProduct int, newImage *ProductImage) *Produ
 	return newImage
 }
 
-func (ProductRepository) findById(id int) (finded *ProductModel) {
-	finded = &ProductModel{}
-	dbHelper.DB.Find(finded, id)
-	return finded
+//=========likes
+
+func (ProductRepository) findUserLikes(idUser int) []LikeProduct {
+	finds := []LikeProduct{}
+	dbHelper.DB.Where("fk_user = ?", idUser).Find(&finds)
+	return finds
 }
 
-func (ProductRepository) findImageByProductId(id int) *ProductImage {
-	productFinded := &ProductModel{}
-	dbHelper.DB.Preload(_IMAGE_ASO).Find(productFinded, id)
-	if productFinded.ID <= 0 || productFinded.Image.ID <= 0 {
-		return nil
+func (ProductRepository) findAllLikesOfProduct(idProduct int) (allLikes []LikeProduct) {
+	dbHelper.DB.Where("fk_product = ?", idProduct).Find(&allLikes)
+	return allLikes
+}
+
+func (ps ProductRepository) addLike(idProduct int, idUser int) int {
+	toSave := &LikeProduct{
+		FkProduct: idProduct,
+		FKUser:    idUser,
 	}
-	return &productFinded.Image
+	dbHelper.DB.Create(toSave)
+
+	allLikes := ps.findAllLikesOfProduct(toSave.FkProduct)
+	return len(allLikes)
 }
 
-func (ProductRepository) delete(toDelete *ProductModel) *ProductModel {
-	dbHelper.DB.Delete(toDelete)
-	return toDelete
-}
+func (ps ProductRepository) removeLike(idProduct int, idUser int) int {
+	toDel := LikeProduct{}
+	dbHelper.DB.Where("fk_product = ? AND fk_user = ?", idProduct, idUser).First(&toDel)
 
-func (ProductRepository) update(oldInfo, newInfo *ProductModel) *ProductModel {
-	dbHelper.DB.Model(&oldInfo).Updates(&newInfo)
-	return newInfo
+	if toDel.FkProduct >= 1 {
+		dbHelper.DB.Where("created_at = ?", toDel.CreatedAt).Delete(&toDel)
+	}
+
+	allLikes := ps.findAllLikesOfProduct(idProduct)
+	return len(allLikes)
 }

@@ -27,7 +27,7 @@ var apiHelper = helpers.ApiHelper{}
 func (UserHadler) getAll(c *gin.Context) {
 	defer apiHelper.HandleError(c)
 
-	token := apiHelper.GetToken(c)
+	token := apiHelper.GetRequiredToken(c)
 	if !usrServ.CheckRol([]string{"admin"}, token) {
 		panic(errorss.UnAuthUser)
 	}
@@ -47,7 +47,7 @@ func (UserHadler) add(c *gin.Context) {
 func (UserHadler) getById(c *gin.Context) {
 	defer apiHelper.HandleError(c)
 
-	token := apiHelper.GetToken(c)
+	token := apiHelper.GetRequiredToken(c)
 	if !usrServ.CheckRol([]string{"admin"}, token) {
 		panic(errorss.UnAuthUser)
 	}
@@ -60,7 +60,7 @@ func (UserHadler) getById(c *gin.Context) {
 func (UserHadler) update(c *gin.Context) {
 	defer apiHelper.HandleError(c)
 
-	token := apiHelper.GetToken(c)
+	token := apiHelper.GetRequiredToken(c)
 	if !usrServ.CheckRol([]string{"admin"}, token) {
 		panic(errorss.UnAuthUser)
 	}
@@ -77,7 +77,7 @@ func (UserHadler) update(c *gin.Context) {
 func (UserHadler) deleteById(c *gin.Context) {
 	defer apiHelper.HandleError(c)
 
-	token := apiHelper.GetToken(c)
+	token := apiHelper.GetRequiredToken(c)
 	if !usrServ.CheckRol([]string{"admin"}, token) {
 		panic(errorss.UnAuthUser)
 	}

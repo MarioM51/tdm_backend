@@ -12,6 +12,10 @@ type IBlogRepository interface {
 	update(oldInfo, newInfo *BlogModel) *BlogModel
 	findById(id int) *BlogModel
 	delete(toDel *BlogModel) *BlogModel
+
+	findUserBlogLikes(idUser int) []LikeBlog
+	addLike(idBlog int, iduser int) int
+	removeLike(idProduct int, idUser int) int
 }
 
 type BlogRepository struct {
@@ -23,12 +27,18 @@ func CreateBlogSchema() {
 	dbHelper.Connect()
 
 	dbHelper.DB.AutoMigrate(&BlogModel{})
+	dbHelper.DB.AutoMigrate(&LikeBlog{})
 }
 
-func (BlogRepository) findAll() *[]BlogModel {
-	all := &[]BlogModel{}
+func (br BlogRepository) findAll() *[]BlogModel {
+	all := []BlogModel{}
 	dbHelper.DB.Select("id", "title", "author", "author", "abstract", "created_at", "updated_at").Find(&all)
-	return all
+	for i := range all {
+		likes := br.findAllLikesOfBlog(all[i].Id)
+		likesCount := len(likes)
+		all[i].Likes = likesCount
+	}
+	return &all
 }
 
 func (BlogRepository) save(newBlog *BlogModel) *BlogModel {
@@ -55,15 +65,19 @@ func (BlogRepository) delete(toDel *BlogModel) *BlogModel {
 	return toDel
 }
 
-func (BlogRepository) findById(id int) *BlogModel {
-	finded := &BlogModel{}
+func (br BlogRepository) findById(id int) *BlogModel {
+	finded := BlogModel{}
 	dbHelper.DB.Find(&finded, id)
 
 	if finded.Id == 0 {
 		return nil
 	}
 
-	return finded
+	likes := br.findAllLikesOfBlog(finded.Id)
+	likesCount := len(likes)
+	finded.Likes = likesCount
+
+	return &finded
 }
 
 func handleTxError(txErr error) {
@@ -72,4 +86,40 @@ func handleTxError(txErr error) {
 		panic(errorss.ErrorResponseModel{HttpStatus: 400, Cause: "That title already exist, try a different title"})
 	}
 	panic(errorss.ErrorResponseModel{HttpStatus: 500, Cause: "Error saving blog"})
+}
+
+// likes
+
+func (BlogRepository) findUserBlogLikes(idUser int) []LikeBlog {
+	finds := []LikeBlog{}
+	dbHelper.DB.Where("fk_user = ?", idUser).Find(&finds)
+	return finds
+}
+
+func (BlogRepository) findAllLikesOfBlog(idBlog int) (allLikes []LikeBlog) {
+	dbHelper.DB.Where("fk_blog = ?", idBlog).Find(&allLikes)
+	return allLikes
+}
+
+func (ps BlogRepository) addLike(idBlog int, idUser int) int {
+	toSave := &LikeBlog{
+		FkBlog: idBlog,
+		FKUser: idUser,
+	}
+	dbHelper.DB.Create(toSave)
+
+	allLikes := ps.findAllLikesOfBlog(toSave.FkBlog)
+	return len(allLikes)
+}
+
+func (ps BlogRepository) removeLike(idBlog int, idUser int) int {
+	toDel := LikeBlog{}
+	dbHelper.DB.Where("fk_blog = ? AND fk_user = ?", idBlog, idUser).First(&toDel)
+
+	if toDel.FkBlog >= 1 {
+		dbHelper.DB.Where("created_at = ?", toDel.CreatedAt).Delete(&toDel)
+	}
+
+	allLikes := ps.findAllLikesOfBlog(idBlog)
+	return len(allLikes)
 }

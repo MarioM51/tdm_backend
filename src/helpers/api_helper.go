@@ -38,13 +38,28 @@ func (ApiHelper) HandleError(c *gin.Context) {
 	}
 }
 
-func (ApiHelper) GetToken(c *gin.Context) *crypto.TokenModel {
+func (ApiHelper) GetRequiredToken(c *gin.Context) *crypto.TokenModel {
 	headerToken := c.Request.Header["Token"]
 	if len(headerToken) == 0 {
 		panic(errorss.ErrorResponseModel{HttpStatus: 401, Cause: "Token header required"})
 	}
 	plainToken := headerToken[0]
-	token := crypto.ParseToken(plainToken)
+	token := crypto.ParseRequiredToken(plainToken)
+	return token
+}
+
+func (ApiHelper) GetOptionalToken(c *gin.Context) *crypto.TokenModel {
+	headerToken := c.Request.Header["Token"]
+	defaulToken := &crypto.TokenModel{IdUser: 0}
+	if len(headerToken) == 0 {
+		return defaulToken
+	}
+	plainToken := headerToken[0]
+	token := crypto.ParseOptionalToken(plainToken)
+	if token == nil {
+		return defaulToken
+	}
+
 	return token
 }
 

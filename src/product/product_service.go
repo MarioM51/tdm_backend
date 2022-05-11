@@ -6,6 +6,8 @@ type ProductService struct{}
 
 var productDao = ProductRepository{}
 
+const _ANON_USER_ID = 1
+
 func (ProductService) findAll() (all *[]ProductModel) {
 	all = productDao.findAll()
 	return all
@@ -58,4 +60,35 @@ func (ps ProductService) delete(id int) (deleted *ProductModel) {
 
 	deleted = productDao.delete(toDel)
 	return deleted
+}
+
+//==== likes
+
+func (ps ProductService) addLike(idProduct int, idUser int) int {
+	if idUser <= 0 {
+		// we change to user 1 that is the anonymous user
+		idUser = _ANON_USER_ID
+	}
+
+	finded := ps.findById(idProduct) // panic if not exists
+
+	if idUser != _ANON_USER_ID {
+		finds := productDao.findUserLikes(idUser)
+		for _, like := range finds {
+			if like.FkProduct == idProduct {
+				panic(errorss.ErrorResponseModel{HttpStatus: 400, Cause: "User already add like to this product"})
+			}
+		}
+	}
+
+	likesCount := productDao.addLike(finded.ID, idUser)
+	return likesCount
+}
+
+func (ps ProductService) removeLike(idProduct int, idUser int) int {
+	if idUser <= 0 {
+		idUser = _ANON_USER_ID
+	}
+	likesCount := productDao.removeLike(idProduct, idUser)
+	return likesCount
 }

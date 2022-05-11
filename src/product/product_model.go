@@ -10,6 +10,7 @@ type ProductModel struct {
 	Name        string       `json:"name"`
 	Price       int          `json:"price"`
 	Description string       `json:"description" gorm:"size:60"`
+	Likes       int          `json:"likes" gorm:"-:all"`
 	Image       ProductImage `json:"image,omitempty" gorm:"foreignKey:ID"`
 }
 
@@ -21,11 +22,15 @@ type ProductImage struct {
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 }
 
-/*
-type params struct {
-	Val ProductsJSONLD
+/* Like */
+
+type LikeProduct struct {
+	FkProduct int       `json:"fk_product"`
+	FKUser    int       `json:"fk_user"`
+	CreatedAt time.Time `json:"created_at"`
 }
-*/
+
+/* JSON-LD */
 
 func ProductModelToArrayJSONLD(products []ProductModel) ProductsWrapperJSONLD {
 

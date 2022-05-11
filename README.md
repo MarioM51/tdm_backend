@@ -1,6 +1,7 @@
 # Tienda
 
 - [Tienda](#tienda)
+  - [TODO](#todo)
   - [SPA: Panel de administracion](#spa-panel-de-administracion)
   - [API](#api)
     - [Api Usuarios = Auth](#api-usuarios--auth)
@@ -9,6 +10,11 @@
   - [SSR (Server side render)](#ssr-server-side-render)
     - [Products](#products)
     - [Blogs](#blogs)
+
+## TODO
+
+1, Refactorizar para uso de commons mas adecuado
+2, Refactorizar para uso de constantes cumunes
 
 ## SPA: Panel de administracion
 
@@ -124,6 +130,26 @@ curl http://localhost:8081/api/products/3 \
   --include
 ```
 
+5, add like to product
+
+- The tokes is optional, where if this is emply the anonymous user will be used
+
+```r
+curl http://localhost:8081/api/products/4/like \
+  --request "POST" \
+  --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDUyNDM0NjEsImp0aSI6IjgyIn0.zTMVlrAwRMpaKtXqUu1-foFwqXaWdvYNlU8C05VLCHY"
+```
+
+6, remove like to product
+
+- The tokes is optional, where if this is emply the anonymous user will be used
+
+```r
+curl http://localhost:8081/api/products/1/like \
+  --request "DELETE" \
+  --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDUyNDM0NjEsImp0aSI6IjgyIn0.zTMVlrAwRMpaKtXqUu1-foFwqXaWdvYNlU8C05VLCHY"
+```
+
 ### API blogs
 
 1, get all blogs
@@ -172,6 +198,26 @@ curl http://localhost:8081/api/blogs/3 \
   --request "DELETE" \
   --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTExMTY4MTYsImp0aSI6Ijc5In0.7mai9dtJhPEpEMyYBDcEDf_IJ2w0PcPj-JPbEhEPdZs" \
   | json_pp
+```
+
+5, add like to blog
+
+- The tokes is optional, where if this is emply the anonymous user will be used
+
+```r
+curl http://localhost:8081/api/blogs/2/like \
+  --request "POST" \
+  --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDUyNDM0NjEsImp0aSI6IjgyIn0.zTMVlrAwRMpaKtXqUu1-foFwqXaWdvYNlU8C05VLCHY"
+```
+
+6, remove like to blog
+
+- The tokes is optional, where if this is emply the anonymous user will be used
+
+```r
+curl http://localhost:8081/api/blogs/2/like \
+  --request "DELETE" \
+  --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDUyNDM0NjEsImp0aSI6IjgyIn0.zTMVlrAwRMpaKtXqUu1-foFwqXaWdvYNlU8C05VLCHY"
 ```
 
 ## SSR (Server side render)

@@ -10,12 +10,17 @@ type IBlogService interface {
 	save(newBlog *BlogModel) *BlogModel
 	update(newBlog *BlogModel) *BlogModel
 	deleteById(idToDel int) *BlogModel
+
+	addLike(idBlog int, IdUser int) int
+	removeLike(idBlog int, IdUser int) int
 }
 
 type BlogService struct {
 }
 
 var blogRepo IBlogRepository = BlogRepository{}
+
+const _ANON_USER_ID = 1
 
 func (BlogService) findAll() *[]BlogModel {
 	all := blogRepo.findAll()
@@ -60,4 +65,33 @@ func (bs BlogService) deleteById(idToDel int) *BlogModel {
 	blogToDel := bs.findById(idToDel)
 	blogDeleted := blogRepo.delete(blogToDel)
 	return blogDeleted
+}
+
+func (bs BlogService) addLike(idProduct int, idUser int) int {
+	if idUser <= 0 {
+		// we change to user 1 that is the anonymous user
+		idUser = _ANON_USER_ID
+	}
+
+	finded := bs.findById(idProduct) // panic if not exists
+
+	if idUser != _ANON_USER_ID {
+		finds := blogRepo.findUserBlogLikes(idUser)
+		for _, like := range finds {
+			if like.FkBlog == idProduct {
+				panic(errorss.ErrorResponseModel{HttpStatus: 400, Cause: "User already add like to this product"})
+			}
+		}
+	}
+
+	likesCount := blogRepo.addLike(finded.Id, idUser)
+	return likesCount
+}
+
+func (bs BlogService) removeLike(idProduct int, idUser int) int {
+	if idUser <= 0 {
+		idUser = _ANON_USER_ID
+	}
+	likesCount := blogRepo.removeLike(idProduct, idUser)
+	return likesCount
 }
