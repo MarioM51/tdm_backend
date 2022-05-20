@@ -121,7 +121,7 @@ func (BlogHandler) addLike(c *gin.Context) {
 
 	likesCount := blogS.addLike(idBlog, int(token.IdUser))
 
-	c.JSON(http.StatusNotFound, gin.H{"likes": likesCount})
+	c.JSON(http.StatusOK, gin.H{"likes": likesCount})
 }
 
 func (BlogHandler) removeLike(c *gin.Context) {
@@ -133,5 +133,5 @@ func (BlogHandler) removeLike(c *gin.Context) {
 
 	likesCount := blogS.removeLike(idBlog, int(token.IdUser))
 
-	c.JSON(http.StatusNotFound, gin.H{"likes": likesCount})
+	c.JSON(http.StatusOK, gin.H{"likes": likesCount})
 }

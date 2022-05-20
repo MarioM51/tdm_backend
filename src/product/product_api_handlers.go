@@ -153,7 +153,7 @@ func (ProductApiHadler) addLike(c *gin.Context) {
 
 	likesCount := productServ.addLike(id, int(token.IdUser))
 
-	c.JSON(http.StatusNotFound, gin.H{"likes": likesCount})
+	c.JSON(http.StatusOK, gin.H{"likes": likesCount})
 }
 
 func (ProductApiHadler) removeLike(c *gin.Context) {
@@ -165,5 +165,5 @@ func (ProductApiHadler) removeLike(c *gin.Context) {
 
 	likesCount := productServ.removeLike(id, int(token.IdUser))
 
-	c.JSON(http.StatusNotFound, gin.H{"likes": likesCount})
+	c.JSON(http.StatusOK, gin.H{"likes": likesCount})
 }

@@ -43,6 +43,7 @@ func ProductModelToArrayJSONLD(products []ProductModel) ProductsWrapperJSONLD {
 			Image:          "/nothing_yet",
 			ImageUpdatedAt: p.Image.UpdatedAt.Format(time.RFC3339),
 			Name:           p.Name,
+			Likes:          p.Likes,
 			Description:    p.Description,
 			Offer:          Offer{Type: "Offer", Price: strconv.Itoa(p.Price), PriceCurrency: "MXN"},
 		})
@@ -78,6 +79,7 @@ type ProductJSONLD struct {
 	ImageUpdatedAt string `json:"image_updated_at"`
 	Name           string `json:"name"`
 	Description    string `json:"description"`
+	Likes          int    `json:"likes"`
 	Offer          Offer  `json:"offers"`
 }
 
