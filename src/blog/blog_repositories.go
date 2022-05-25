@@ -26,13 +26,15 @@ var dbHelper = helpers.DBHelper{}
 func CreateBlogSchema() {
 	dbHelper.Connect()
 
-	dbHelper.DB.AutoMigrate(&BlogModel{})
-	dbHelper.DB.AutoMigrate(&LikeBlog{})
+	/*
+		dbHelper.DB.AutoMigrate(&BlogModel{})
+		dbHelper.DB.AutoMigrate(&LikeBlog{})
+	*/
 }
 
 func (br BlogRepository) findAll() *[]BlogModel {
 	all := []BlogModel{}
-	dbHelper.DB.Select("id", "title", "author", "author", "abstract", "created_at", "updated_at").Find(&all)
+	dbHelper.DB.Select("id", "title", "author", "abstract", "created_at", "updated_at").Find(&all)
 	for i := range all {
 		likes := br.findAllLikesOfBlog(all[i].Id)
 		likesCount := len(likes)

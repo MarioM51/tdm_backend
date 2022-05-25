@@ -15,9 +15,11 @@ const _IMAGE_ASO = "Image"
 func CreateProductSchema() {
 	dbHelper.Connect()
 
-	dbHelper.DB.AutoMigrate(&ProductImage{})
-	dbHelper.DB.AutoMigrate(&ProductModel{})
-	dbHelper.DB.AutoMigrate(&LikeProduct{})
+	/*
+		dbHelper.DB.AutoMigrate(&ProductImage{})
+		dbHelper.DB.AutoMigrate(&ProductModel{})
+		dbHelper.DB.AutoMigrate(&LikeProduct{})
+	*/
 }
 
 func (pr ProductRepository) findAll() *[]ProductModel {

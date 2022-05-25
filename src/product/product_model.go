@@ -7,11 +7,15 @@ import (
 
 type ProductModel struct {
 	ID          int          `json:"id" gorm:"primaryKey"`
-	Name        string       `json:"name"`
+	Name        string       `json:"name" gorm:"size:60"`
 	Price       int          `json:"price"`
-	Description string       `json:"description" gorm:"size:60"`
+	Description string       `json:"description" gorm:"size:160"`
 	Likes       int          `json:"likes" gorm:"-:all"`
 	Image       ProductImage `json:"image,omitempty" gorm:"foreignKey:ID"`
+}
+
+func (ProductModel) TableName() string {
+	return "products"
 }
 
 type ProductImage struct {
@@ -22,12 +26,20 @@ type ProductImage struct {
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 }
 
+func (ProductImage) TableName() string {
+	return "product_images"
+}
+
 /* Like */
 
 type LikeProduct struct {
 	FkProduct int       `json:"fk_product"`
 	FKUser    int       `json:"fk_user"`
 	CreatedAt time.Time `json:"created_at"`
+}
+
+func (LikeProduct) TableName() string {
+	return "product_likes"
 }
 
 /* JSON-LD */

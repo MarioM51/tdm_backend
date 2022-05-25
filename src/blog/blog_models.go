@@ -17,6 +17,10 @@ type BlogModel struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
+func (BlogModel) TableName() string {
+	return "blogs"
+}
+
 func (b BlogModel) validate() string {
 	if b.Title == "" {
 		return "title is required"
@@ -35,24 +39,18 @@ type LikeBlog struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
+func (LikeBlog) TableName() string {
+	return "blog_likes"
+}
+
 // json-ld
 
 func BlogModelToArrayJSONLD(blogsM []BlogModel) BlogsWrapperJSONLD {
 
 	var blogListA = []BlogJSONLD{}
 	for _, b := range blogsM {
-		blogListA = append(blogListA, BlogJSONLD{
-			Type:          "BlogPosting",
-			Identifier:    strconv.Itoa(b.Id),
-			Headline:      b.Title,
-			Abstract:      b.Abstract,
-			DatePublished: b.CreatedAt.Format(time.RFC3339),
-			DateModified:  b.UpdatedAt.Format(time.RFC3339),
-			Author: Author{
-				Type: "Person",
-				Name: b.Author,
-			},
-		})
+		newBlog := blogModelToJSONLD(b)
+		blogListA = append(blogListA, newBlog)
 	}
 
 	return BlogsWrapperJSONLD{
@@ -64,7 +62,7 @@ func BlogModelToArrayJSONLD(blogsM []BlogModel) BlogsWrapperJSONLD {
 	}
 }
 
-func BlogModelToJSONLD(b BlogModel) BlogWrapperJSONLD {
+func blogModelToJSONLD(b BlogModel) BlogJSONLD {
 
 	blog := BlogJSONLD{
 		Type:          "BlogPosting",
@@ -73,6 +71,7 @@ func BlogModelToJSONLD(b BlogModel) BlogWrapperJSONLD {
 		Image:         strconv.Itoa(b.Id),
 		Abstract:      b.Abstract,
 		ArticleBody:   b.Body,
+		Likes:         b.Likes,
 		DatePublished: b.CreatedAt.Format(time.RFC3339),
 		DateModified:  b.UpdatedAt.Format(time.RFC3339),
 		Author: Author{
@@ -81,9 +80,19 @@ func BlogModelToJSONLD(b BlogModel) BlogWrapperJSONLD {
 		},
 	}
 
-	return BlogWrapperJSONLD{
-		Val: blog,
+	return blog
+
+}
+
+func BlogModelToJSONLDWrapped(b BlogModel) BlogWrapperJSONLD {
+
+	newBlog := blogModelToJSONLD(b)
+
+	wrap := BlogWrapperJSONLD{
+		Val: newBlog,
 	}
+
+	return wrap
 
 }
 
@@ -111,6 +120,7 @@ type BlogJSONLD struct {
 	DateModified  string `json:"dateModified"`
 	Image         string `json:"image"`
 	Author        Author `json:"autor"`
+	Likes         int    `json:"likes"`
 }
 
 type Author struct {

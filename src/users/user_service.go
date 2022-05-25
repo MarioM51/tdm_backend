@@ -78,7 +78,7 @@ func (uServ UserService) activate(id uint, code string) *errorss.ErrorResponseMo
 		return &badCredentials
 	}
 
-	if userFinded.ActivationHash == "_" {
+	if uServ.isUserActiivated(userFinded) {
 		return &errorss.ErrorResponseModel{HttpStatus: 400, Cause: "User already activated"}
 	}
 
@@ -100,7 +100,7 @@ func (uServ UserService) login(toLoggin *UserModel) (token string, user *UserMod
 		panic(badCredentials)
 	}
 
-	if userFinded.ActivationHash != "_" && userFinded.ActivationHash != "" {
+	if !uServ.isUserActiivated(userFinded) {
 		panic(errorss.ErrorResponseModel{HttpStatus: 400, Cause: "Email validation requied"})
 	}
 
@@ -112,6 +112,10 @@ func (uServ UserService) login(toLoggin *UserModel) (token string, user *UserMod
 	token = crypto.GenerateToken(fmt.Sprint(userFinded.ID))
 
 	return token, userFinded
+}
+
+func (uServ UserService) isUserActiivated(u *UserModel) bool {
+	return u.ActivationHash == "_" || u.ActivationHash == ""
 }
 
 func (uServ UserService) CheckRol(rolToSearch []string, token *crypto.TokenModel) bool {

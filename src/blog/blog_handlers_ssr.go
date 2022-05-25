@@ -39,7 +39,7 @@ func (BlogSSRHandler) findById(c *gin.Context) {
 	var finded = blogS.findById(id)
 	finded.Thumbnail = ""
 
-	allBlogsJSONLD := BlogModelToJSONLD(*finded)
+	allBlogsJSONLD := BlogModelToJSONLDWrapped(*finded)
 
 	c.HTML(http.StatusOK, "blog-details", gin.H{
 		"BLOG_JSONLD": allBlogsJSONLD.Val,
