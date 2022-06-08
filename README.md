@@ -7,6 +7,7 @@
     - [Api Usuarios = Auth](#api-usuarios--auth)
     - [Api Productos](#api-productos)
     - [API blogs](#api-blogs)
+    - [API Orders](#api-orders)
   - [SSR (Server side render)](#ssr-server-side-render)
     - [Products](#products)
     - [Blogs](#blogs)
@@ -218,6 +219,32 @@ curl http://localhost:8081/api/blogs/2/like \
 curl http://localhost:8081/api/blogs/2/like \
   --request "DELETE" \
   --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDUyNDM0NjEsImp0aSI6IjgyIn0.zTMVlrAwRMpaKtXqUu1-foFwqXaWdvYNlU8C05VLCHY"
+```
+
+### API Orders
+
+1, Add Order
+
+```r
+curl http://localhost:8081/api/orders \
+  --include \
+  --request "POST" \
+  --data '{ "id_user": 1, "products": [ { "id_product": 1, "amount": 3 }, { "id_product": 91, "amount": 1 } ] }'
+```
+
+2, Find by ids
+
+```r
+curl http://localhost:8081/api/orders/find \
+  --include \
+  --request "POST" \
+  --data '[1,2,3]'
+```
+
+3, Delete by id
+
+```r
+curl http://localhost:8081/api/orders/3 --request "DELETE" | json_pp
 ```
 
 ## SSR (Server side render)

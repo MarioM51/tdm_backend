@@ -5,6 +5,7 @@ import (
 	"time"
 	"users_api/src/blog"
 	"users_api/src/helpers"
+	"users_api/src/orders"
 	"users_api/src/product"
 	"users_api/src/users"
 
@@ -17,6 +18,7 @@ func main() {
 	users.CreateUserSchema()
 	product.CreateProductSchema()
 	blog.CreateBlogSchema()
+	orders.CreateOrderSchema()
 
 	router := gin.Default()
 	gin.DisableConsoleColor()
@@ -41,6 +43,7 @@ func main() {
 	users.AddApiRoutes(router, apiPrefix)
 	product.AddApiRoutes(router, apiPrefix)
 	blog.AddApiRoutes(router, apiPrefix)
+	orders.AddApiRoutes(router, apiPrefix)
 
 	//Setup server side rendering
 	templatesM := []helpers.TemplateModel{}
