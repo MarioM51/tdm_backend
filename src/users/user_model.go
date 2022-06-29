@@ -6,19 +6,31 @@ import (
 
 type UserModel struct {
 	gorm.Model
-	Email          string `json:"email"`
-	Password       string `json:"password,omitempty"`
-	ActivationHash string `json:"-"`
-	//Rols           []RoleModel `gorm:"many2many:users_rols;" json:"rols"`
-	Rols []RoleModel `json:"rols" gorm:"many2many:users_rols;foreignKey:id;joinForeignKey:user_id;References:id;joinReferences:role_id"`
+	Email          string      `json:"email"`
+	Password       string      `json:"password,omitempty"`
+	ActivationHash string      `json:"-"`
+	Rols           []RoleModel `json:"rols" gorm:"many2many:users_rols;foreignKey:id;joinForeignKey:user_id;References:id;joinReferences:role_id"`
+	FullName       string      `json:"fullName"`
+	Phone          string      `json:"phone"`
+	Zip            string      `json:"zip"`
+	State          string      `json:"state"`
+	City           string      `json:"city"`
+	Street         string      `json:"street"`
+	StreetNum      string      `json:"streetNum"`
 }
-
-// Which creates join table: users_rols
-//   foreign key: user_id, reference: users.id
-//   foreign key: profile_refer, reference: profiles.user_refer
 
 func (UserModel) TableName() string {
 	return "users"
+}
+
+func (u UserModel) CanConfirmOrder() bool {
+	var can = false
+
+	if u.FullName != "" && u.Phone != "" && u.Zip != "" && u.State != "" && u.City != "" && u.Street != "" && u.StreetNum != "" {
+		can = true
+	}
+
+	return can
 }
 
 type RoleModel struct {

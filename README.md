@@ -244,7 +244,49 @@ curl http://localhost:8081/api/orders/find \
 3, Delete by id
 
 ```r
-curl http://localhost:8081/api/orders/3 --request "DELETE" | json_pp
+curl http://localhost:8081/api/orders/1 --request "DELETE" | json_pp
+```
+
+4, Confirm order
+
+```r
+curl http://localhost:8081/api/orders/1/confirm \
+  --request "PUT" \
+  --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTUxOTA3MzQsImp0aSI6IjIifQ.tinqy68DlRk2IMpOTwdsgUVOos6-FFL3gQYX3oKg2AE"
+  | json_pp
+```
+
+5, Find All
+
+- admin user required
+
+```r
+curl http://localhost:8081/api/orders \
+  --request "GET" \
+  --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTUzNTkyNzksImp0aSI6Ijc5In0.LjaV5IU3ZcVETZkRssuEpz3gL-FQTUE4GqboJkVvBEM" \
+  | json_pp
+```
+
+6, Confirm order
+
+- admin user required
+
+```r
+curl http://localhost:8081/api/orders/1/accept \
+  --request "PUT" \
+  --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTUxOTA3MzQsImp0aSI6IjIifQ.tinqy68DlRk2IMpOTwdsgUVOos6-FFL3gQYX3oKg2AE" \
+  | json_pp
+```
+
+6, Get orders of user logged
+
+- token required
+
+```r
+curl http://localhost:8081/api/orders/findByUserLogged \
+  --request "GET" \
+  --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTYwMTAyMzQsImp0aSI6IjIifQ.wk5HVH6fW4H5Q6xqWz32ACDSq3KGVBKGntYWzRiUSVc" \
+  | json_pp
 ```
 
 ## SSR (Server side render)

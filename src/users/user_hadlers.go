@@ -46,14 +46,16 @@ func (UserHadler) add(c *gin.Context) {
 
 func (UserHadler) getById(c *gin.Context) {
 	defer apiHelper.HandleError(c)
-
 	token := apiHelper.GetRequiredToken(c)
-	if !usrServ.CheckRol([]string{"admin"}, token) {
-		panic(errorss.UnAuthUser)
+	id := apiHelper.GetIntParam(c, "id")
+
+	if token.IdUser != uint(id) {
+		if !usrServ.CheckRol([]string{"admin"}, token) {
+			panic(errorss.UnAuthUser)
+		}
 	}
 
-	id := apiHelper.GetIntParam(c, "id")
-	userFinded := usrServ.findById(uint(id))
+	userFinded := usrServ.FindById(uint(id))
 	showUser(c, userFinded)
 }
 
@@ -61,11 +63,14 @@ func (UserHadler) update(c *gin.Context) {
 	defer apiHelper.HandleError(c)
 
 	token := apiHelper.GetRequiredToken(c)
-	if !usrServ.CheckRol([]string{"admin"}, token) {
-		panic(errorss.UnAuthUser)
+	newInfo := getUser(c)
+
+	if token.IdUser != uint(newInfo.ID) {
+		if !usrServ.CheckRol([]string{"admin"}, token) {
+			panic(errorss.UnAuthUser)
+		}
 	}
 
-	newInfo := getUser(c)
 	if newInfo.ID <= 0 {
 		panic(errorss.ErrorResponseModel{HttpStatus: 400, Cause: "Id required"})
 	}

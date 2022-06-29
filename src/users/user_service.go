@@ -11,7 +11,7 @@ type IUserService interface {
 
 	save(newUser UserModel) *UserModel
 
-	findById(id uint) *UserModel
+	FindById(id uint) *UserModel
 
 	update(newInfo *UserModel) *UserModel
 
@@ -48,12 +48,12 @@ func (UserService) save(newUser UserModel) *UserModel {
 	return userRepo.saveUser(&newUser)
 }
 
-func (UserService) findById(id uint) *UserModel {
+func (UserService) FindById(id uint) *UserModel {
 	return userRepo.findUserById(id)
 }
 
 func (uServ UserService) update(newInfo *UserModel) *UserModel {
-	oldUser := uServ.findById(newInfo.ID)
+	oldUser := uServ.FindById(newInfo.ID)
 	if oldUser == nil {
 		panic(userNotFound)
 	}
@@ -62,7 +62,7 @@ func (uServ UserService) update(newInfo *UserModel) *UserModel {
 }
 
 func (uServ UserService) delete(id uint) *UserModel {
-	toDel := uServ.findById(id)
+	toDel := uServ.FindById(id)
 	if toDel == nil {
 		panic(userNotFound)
 	}
@@ -73,7 +73,7 @@ func (uServ UserService) delete(id uint) *UserModel {
 }
 
 func (uServ UserService) activate(id uint, code string) *errorss.ErrorResponseModel {
-	userFinded := uServ.findById(id)
+	userFinded := uServ.FindById(id)
 	if userFinded == nil {
 		return &badCredentials
 	}
@@ -119,7 +119,7 @@ func (uServ UserService) isUserActiivated(u *UserModel) bool {
 }
 
 func (uServ UserService) CheckRol(rolToSearch []string, token *crypto.TokenModel) bool {
-	userLogged := usrServ.findById(token.IdUser)
+	userLogged := usrServ.FindById(token.IdUser)
 	for i := range userLogged.Rols {
 		for k := range rolToSearch {
 			if userLogged.Rols[i].Name == rolToSearch[k] {

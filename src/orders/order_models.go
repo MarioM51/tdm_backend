@@ -7,12 +7,14 @@ import (
 )
 
 type Order struct {
-	Id        int            `json:"id"`
-	IdUser    int            `json:"idUser"`
-	Products  []OrderProduct `json:"products" gorm:"-:all"`
-	CreatedAt time.Time      `json:"created_at"`
-	UpdatedAt time.Time      `json:"-"`
-	DeletedAt gorm.DeletedAt `json:"-"`
+	Id          int            `json:"id"`
+	IdUser      int            `json:"idUser"`
+	Products    []OrderProduct `json:"products" gorm:"-:all"`
+	CreatedAt   time.Time      `json:"created_at"`
+	UpdatedAt   time.Time      `json:"-"`
+	DeletedAt   gorm.DeletedAt `json:"-"`
+	ConfirmedAt time.Time      `json:"confirmed_at"`
+	AcceptedAt  time.Time      `json:"accepted_at"`
 }
 
 func (Order) TableName() string {
