@@ -62,7 +62,7 @@ func (dbh OrderRepository) findByIds(ids []int) (orders *[]Order) {
 }
 
 func (dbh OrderRepository) findAll() (orders *[]Order) {
-	tx := dbHelper.DB.Find(&orders)
+	tx := dbHelper.DB.Order("id desc").Find(&orders)
 	if tx.Error != nil {
 		panic(errorss.ErrorResponseModel{HttpStatus: 500, Cause: "Error finding orders"})
 	}

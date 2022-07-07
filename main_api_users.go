@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"strings"
 	"time"
 	"users_api/src/blog"
 	"users_api/src/helpers"
@@ -11,6 +12,7 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/nanmu42/gzip"
 )
 
 func main() {
@@ -22,9 +24,19 @@ func main() {
 
 	router := gin.Default()
 	gin.DisableConsoleColor()
+	router.Use(gzip.DefaultHandler().Gin)
 	gin.DefaultWriter = os.Stdout
 
 	//Setup static server
+	router.Use(func() gin.HandlerFunc {
+		return func(c *gin.Context) {
+			if strings.HasPrefix(c.Request.URL.Path, "/admin") || strings.HasPrefix(c.Request.URL.Path, "/static") {
+				c.Writer.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
+			}
+		}
+	}(),
+	)
+
 	router.Static("/admin", "./public/admin-spa")
 	router.Static("/static", "./public/static")
 
@@ -51,5 +63,5 @@ func main() {
 	blog.AddSsrRoutes(router, &templatesM)
 	router.HTMLRender = helpers.CreateHTMLRenderHelper(templatesM)
 
-	router.Run("localhost:8081")
+	router.Run("192.168.1.81:80")
 }

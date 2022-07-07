@@ -126,13 +126,13 @@ func showOrder(c *gin.Context, p *Order) {
 	if p != nil {
 		c.JSON(http.StatusOK, &p)
 	} else {
-		c.JSON(http.StatusNotFound, gin.H{"message": "order not found"})
+		c.JSON(http.StatusNotFound, errorss.ErrorResponseModel{HttpStatus: 404, Cause: "orders not found"})
 	}
 }
 
 func showOrders(c *gin.Context, orders *[]Order) {
 	if orders == nil || len(*orders) <= 0 {
-		c.JSON(http.StatusNotFound, gin.H{"message": "order not found"})
+		c.JSON(http.StatusNotFound, errorss.ErrorResponseModel{HttpStatus: 404, Cause: "orders not found"})
 		return
 	}
 
