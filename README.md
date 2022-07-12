@@ -23,7 +23,7 @@ Peticion con el navegador
 
 ```r
 #Use in the browser
-http://localhost:8081/api/admin
+http://192.168.1.81:80/api/admin
 ```
 
 ## API
@@ -33,7 +33,7 @@ http://localhost:8081/api/admin
 1, get all users
 
 ```r
-curl http://localhost:8081/api/users \
+curl http://192.168.1.81:80/api/users \
     --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDUyMTQ0ODMsImp0aSI6Ijc5In0.jfiR0soCJat9zn1d1grNERc3_BW39vtz41b9qDoxyq4" \
     | json_pp
 ```
@@ -41,7 +41,7 @@ curl http://localhost:8081/api/users \
 2, Add user
 
 ```r
-curl http://localhost:8081/api/users \
+curl http://192.168.1.81:80/api/users \
     --header "Content-Type: application/json" \
     --request "POST" \
     --data '{ "email": "mario1@email.com", "password": "mario1" }'
@@ -50,7 +50,7 @@ curl http://localhost:8081/api/users \
 3, Get user by id
 
 ```r
-curl http://localhost:8081/api/users/80 \
+curl http://192.168.1.81:80/api/users/80 \
   --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDMyMjQ0ODIsImp0aSI6Ijc5In0.1tLAnb-bsj7uJ0YREcNZoMf6MxXezvC5JGfggn9HxzI" \
   | json_pp
 ```
@@ -58,7 +58,7 @@ curl http://localhost:8081/api/users/80 \
 4, Update user
 
 ```r
-curl http://localhost:8081/api/users \
+curl http://192.168.1.81:80/api/users \
     --include \
     --request "PUT" \
     --header "Content-Type: application/json" \
@@ -69,20 +69,20 @@ curl http://localhost:8081/api/users \
 5, Delete user
 
 ```r
-curl http://localhost:8081/api/users/80 --request "DELETE" \
+curl http://192.168.1.81:80/api/users/80 --request "DELETE" \
   --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDMyMjQ0ODIsImp0aSI6Ijc5In0.1tLAnb-bsj7uJ0YREcNZoMf6MxXezvC5JGfggn9HxzI"
 ```
 
 6, Activate user
 
 ```r
-curl http://localhost:8081/api/users/1/activate/XXX
+curl http://192.168.1.81:80/api/users/1/activate/XXX
 ```
 
 7, Login
 
 ```r
-curl http://localhost:8081/api/users/login \
+curl http://192.168.1.81:80/api/users/login \
   --include \
   --header "Content-Type: application/json" \
   --request "POST" \
@@ -94,7 +94,7 @@ curl http://localhost:8081/api/users/login \
 1, get All products
 
 ```r
-curl http://localhost:8081/api/products \
+curl http://192.168.1.81:80/api/products \
   --request "GET" | json_pp
 ```
 
@@ -103,11 +103,11 @@ curl http://localhost:8081/api/products \
 - id product will be ignored
 
 ```r
-curl http://localhost:8081/api/products \
+curl http://192.168.1.81:80/api/products \
   --request "POST" \
   --include \
-  --header "Token: ..." \
-  --data '{ "name":"Producto 3", "price":1003, "image":"Some.3", "description":"Some product description 3" }'
+  --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTcxNzU4NjAsImp0aSI6Ijc5In0.F-PyYWdcBkbY-xIprWwFpH57tBjl2xRTuSgmI-F4S8s" \
+  --data '{ "name":"Producto 1", "price":1001, "description":"Some product description 1" }'
 ```
 
 2, update a product
@@ -115,7 +115,7 @@ curl http://localhost:8081/api/products \
 - In the payload the id product is required
 
 ```r
-curl http://localhost:8081/api/products \
+curl http://192.168.1.81:80/api/products \
   --request "PUT" \
   --include \
   --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDUyNDM0NjEsImp0aSI6IjgyIn0.zTMVlrAwRMpaKtXqUu1-foFwqXaWdvYNlU8C05VLCHY" \
@@ -125,7 +125,7 @@ curl http://localhost:8081/api/products \
 4, delete a product by id
 
 ```r
-curl http://localhost:8081/api/products/3 \
+curl http://192.168.1.81:80/api/products/3 \
   --request "DELETE" \
   --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDUyNDM0NjEsImp0aSI6IjgyIn0.zTMVlrAwRMpaKtXqUu1-foFwqXaWdvYNlU8C05VLCHY" \
   --include
@@ -136,7 +136,7 @@ curl http://localhost:8081/api/products/3 \
 - The tokes is optional, where if this is emply the anonymous user will be used
 
 ```r
-curl http://localhost:8081/api/products/4/like \
+curl http://192.168.1.81:80/api/products/4/like \
   --request "POST" \
   --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDUyNDM0NjEsImp0aSI6IjgyIn0.zTMVlrAwRMpaKtXqUu1-foFwqXaWdvYNlU8C05VLCHY"
 ```
@@ -146,9 +146,34 @@ curl http://localhost:8081/api/products/4/like \
 - The tokes is optional, where if this is emply the anonymous user will be used
 
 ```r
-curl http://localhost:8081/api/products/1/like \
+curl http://192.168.1.81:80/api/products/1/like \
   --request "DELETE" \
   --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDUyNDM0NjEsImp0aSI6IjgyIn0.zTMVlrAwRMpaKtXqUu1-foFwqXaWdvYNlU8C05VLCHY"
+```
+
+7, See image product by Id Image
+
+- Use the browser and this will show the image
+
+```r
+http://192.168.1.81/api/products/image/1
+
+```
+
+8, add image to product
+
+```r
+curl 'http://192.168.1.81/api/products/2/images' \
+  -H 'Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryjNS3Ls6gNAOJjc2g' \
+  --data-raw $'------WebKitFormBoundaryjNS3Ls6gNAOJjc2g\r\nContent-Disposition: form-data; name="file"; filename="small_green.png"\r\nContent-Type: image/png\r\n\r\n\r\n------WebKitFormBoundaryjNS3Ls6gNAOJjc2g--\r\n'
+```
+
+8, add image to product
+
+```r
+curl 'http://192.168.1.81/api/products/image/3' \
+  --request "DELETE" \
+  --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTczNDc5MjcsImp0aSI6Ijc5In0.hJDKQw1JTP4XD_vRix4u5hbM89lTbgSpSdP_1FqlhU8"
 ```
 
 ### API blogs
@@ -156,20 +181,20 @@ curl http://localhost:8081/api/products/1/like \
 1, get all blogs
 
 ```r
-curl http://localhost:8081/api/blogs --request "GET" | json_pp
+curl http://192.168.1.81:80/api/blogs --request "GET" | json_pp
 ```
 
 2, find by id
 
 ```r
-curl http://localhost:8081/api/blogs/2 --request "GET" | json_pp
+curl http://192.168.1.81:80/api/blogs/2 --request "GET" | json_pp
 ```
 
 3, show image
 
 ```r
 #Use in the browser
-http://localhost:8081/api/blogs/1/image
+http://192.168.1.81:80/api/blogs/1/image
 ```
 
 4, add blog
@@ -177,7 +202,7 @@ http://localhost:8081/api/blogs/1/image
 - id blog will be ignored
 
 ```r
-curl http://localhost:8081/api/blogs --request "POST" \
+curl http://192.168.1.81:80/api/blogs --request "POST" \
   --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTExMTY4MTYsImp0aSI6Ijc5In0.7mai9dtJhPEpEMyYBDcEDf_IJ2w0PcPj-JPbEhEPdZs" \
   --data '{ "id": 0, "title": "Algo 2", "body": "<XX>...</XX><p>...", "abstract": "Some abstract ...", "thumbnail": "data:image/png;base64,xx...==", "author": null, "createdAt": null, "updateAt": null }' \
   | json_pp
@@ -186,7 +211,7 @@ curl http://localhost:8081/api/blogs --request "POST" \
 5, update blog
 
 ```r
-curl http://localhost:8081/api/blogs --request "PUT" \
+curl http://192.168.1.81:80/api/blogs --request "PUT" \
   --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTExMTY4MTYsImp0aSI6Ijc5In0.7mai9dtJhPEpEMyYBDcEDf_IJ2w0PcPj-JPbEhEPdZs" \
   --data '{ "id": 1, "title": "Algo 11", "body": "<XX>11</XX><p>...", "abstract": "Some abstract 11", "thumbnail": "data:image/png;base64,xx...11", "author": null, "createdAt": null, "updateAt": null }' \
   | json_pp
@@ -195,7 +220,7 @@ curl http://localhost:8081/api/blogs --request "PUT" \
 4, delete a blog by id
 
 ```r
-curl http://localhost:8081/api/blogs/3 \
+curl http://192.168.1.81:80/api/blogs/3 \
   --request "DELETE" \
   --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTExMTY4MTYsImp0aSI6Ijc5In0.7mai9dtJhPEpEMyYBDcEDf_IJ2w0PcPj-JPbEhEPdZs" \
   | json_pp
@@ -206,7 +231,7 @@ curl http://localhost:8081/api/blogs/3 \
 - The tokes is optional, where if this is emply the anonymous user will be used
 
 ```r
-curl http://localhost:8081/api/blogs/2/like \
+curl http://192.168.1.81:80/api/blogs/2/like \
   --request "POST" \
   --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDUyNDM0NjEsImp0aSI6IjgyIn0.zTMVlrAwRMpaKtXqUu1-foFwqXaWdvYNlU8C05VLCHY"
 ```
@@ -216,7 +241,7 @@ curl http://localhost:8081/api/blogs/2/like \
 - The tokes is optional, where if this is emply the anonymous user will be used
 
 ```r
-curl http://localhost:8081/api/blogs/2/like \
+curl http://192.168.1.81:80/api/blogs/2/like \
   --request "DELETE" \
   --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDUyNDM0NjEsImp0aSI6IjgyIn0.zTMVlrAwRMpaKtXqUu1-foFwqXaWdvYNlU8C05VLCHY"
 ```
@@ -226,7 +251,7 @@ curl http://localhost:8081/api/blogs/2/like \
 1, Add Order
 
 ```r
-curl http://localhost:8081/api/orders \
+curl http://192.168.1.81:80/api/orders \
   --include \
   --request "POST" \
   --data '{ "id_user": 1, "products": [ { "id_product": 1, "amount": 3 }, { "id_product": 91, "amount": 1 } ] }'
@@ -235,7 +260,7 @@ curl http://localhost:8081/api/orders \
 2, Find by ids
 
 ```r
-curl http://localhost:8081/api/orders/find \
+curl http://192.168.1.81:80/api/orders/find \
   --include \
   --request "POST" \
   --data '[1,2,3]'
@@ -244,13 +269,13 @@ curl http://localhost:8081/api/orders/find \
 3, Delete by id
 
 ```r
-curl http://localhost:8081/api/orders/1 --request "DELETE" | json_pp
+curl http://192.168.1.81:80/api/orders/1 --request "DELETE" | json_pp
 ```
 
 4, Confirm order
 
 ```r
-curl http://localhost:8081/api/orders/1/confirm \
+curl http://192.168.1.81:80/api/orders/1/confirm \
   --request "PUT" \
   --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTUxOTA3MzQsImp0aSI6IjIifQ.tinqy68DlRk2IMpOTwdsgUVOos6-FFL3gQYX3oKg2AE"
   | json_pp
@@ -261,7 +286,7 @@ curl http://localhost:8081/api/orders/1/confirm \
 - admin user required
 
 ```r
-curl http://localhost:8081/api/orders \
+curl http://192.168.1.81:80/api/orders \
   --request "GET" \
   --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTUzNTkyNzksImp0aSI6Ijc5In0.LjaV5IU3ZcVETZkRssuEpz3gL-FQTUE4GqboJkVvBEM" \
   | json_pp
@@ -272,7 +297,7 @@ curl http://localhost:8081/api/orders \
 - admin user required
 
 ```r
-curl http://localhost:8081/api/orders/1/accept \
+curl http://192.168.1.81:80/api/orders/1/accept \
   --request "PUT" \
   --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTUxOTA3MzQsImp0aSI6IjIifQ.tinqy68DlRk2IMpOTwdsgUVOos6-FFL3gQYX3oKg2AE" \
   | json_pp
@@ -283,7 +308,7 @@ curl http://localhost:8081/api/orders/1/accept \
 - token required
 
 ```r
-curl http://localhost:8081/api/orders/findByUserLogged \
+curl http://192.168.1.81:80/api/orders/findByUserLogged \
   --request "GET" \
   --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTYwMTAyMzQsImp0aSI6IjIifQ.wk5HVH6fW4H5Q6xqWz32ACDSq3KGVBKGntYWzRiUSVc" \
   | json_pp
@@ -295,12 +320,12 @@ curl http://localhost:8081/api/orders/findByUserLogged \
 
 ```r
 #Use in the browser
-http://localhost:8081/products
+http://192.168.1.81:80/products
 ```
 
 ### Blogs
 
 ```r
 #Use in the browser
-http://localhost:8081/blogs
+http://192.168.1.81:80/blogs
 ```

@@ -1,6 +1,7 @@
 package product
 
 import (
+	"users_api/src/errorss"
 	"users_api/src/helpers"
 
 	"gorm.io/gorm/clause"
@@ -27,19 +28,10 @@ func (pr ProductRepository) findAll() *[]ProductModel {
 	dbHelper.DB.Find(&allProducts)
 
 	//add image struct only with the id
-	var ids []int
 	for i := range allProducts {
-		ids = append(ids, allProducts[i].ID)
-	}
-	allImages := []ProductImage{}
-	dbHelper.DB.Select("id, updated_at").Find(&allImages, ids)
-
-	for iProduct := 0; iProduct < len(allProducts); iProduct++ {
-		for iImage := 0; iImage < len(allImages); iImage++ {
-			if allProducts[iProduct].ID == allImages[iImage].ID {
-				allProducts[iProduct].Image = allImages[iImage]
-			}
-		}
+		allImages := []ProductImage{}
+		dbHelper.DB.Select("id, updated_at").Where("fk_product = ?", allProducts[i].ID).Find(&allImages)
+		allProducts[i].Images = allImages
 	}
 
 	//add num of likes
@@ -55,7 +47,7 @@ func (pr ProductRepository) findAll() *[]ProductModel {
 
 func (ProductRepository) save(toSave *ProductModel) *ProductModel {
 	//dbHelper.DB.Create(toSave)
-	toSave.Image = ProductImage{}
+	toSave.Images = []ProductImage{}
 	dbHelper.DB.Omit(clause.Associations).Create(toSave)
 	return toSave
 }
@@ -86,25 +78,46 @@ func (ProductRepository) update(oldInfo, newInfo *ProductModel) *ProductModel {
 
 //=========images
 
-func (ProductRepository) findImageByProductId(id int) *ProductImage {
-	productFinded := &ProductModel{}
-	dbHelper.DB.Preload(_IMAGE_ASO).Find(productFinded, id)
-	if productFinded.ID <= 0 || productFinded.Image.ID <= 0 {
+func (ProductRepository) findImageByIdImage(idImage int) *ProductImage {
+	image := &ProductImage{}
+	dbHelper.DB.Preload(_IMAGE_ASO).Find(image, idImage)
+	if image.ID <= 0 {
 		return nil
 	}
-	return &productFinded.Image
+	return image
 }
 
 func (ProductRepository) saveImage(idProduct int, newImage *ProductImage) *ProductImage {
-	image := ProductImage{}
-	newImage.ID = idProduct
-	dbHelper.DB.Find(&image, idProduct)
-	if image.ID > 0 {
-		dbHelper.DB.Delete(&image, idProduct)
+	/*
+		image := ProductImage{}
+		dbHelper.DB.Find(&image, idProduct)
+		if image.ID > 0 {
+			dbHelper.DB.Delete(&image, idProduct)
+		}
+	*/
+	newImage.FkProduct = idProduct
+	newImage.ID = 0
+	tx := dbHelper.DB.Create(newImage)
+	if tx.Error != nil {
+		panic(errorss.ErrorResponseModel{HttpStatus: 500, Cause: "Error saving image product"})
 	}
-	dbHelper.DB.Create(newImage)
 	newImage.Base64 = ""
 	return newImage
+}
+
+func (ProductRepository) deleteImageIdImage(idImage int) (toDel *ProductImage) {
+	finded := ProductImage{}
+	dbHelper.DB.Select("id", "updated_at").First(&finded, idImage)
+	if finded.ID <= 0 {
+		return nil
+	}
+
+	tx := dbHelper.DB.Delete(&toDel, finded.ID)
+	if tx.Error != nil {
+		panic(errorss.ErrorResponseModel{HttpStatus: 500, Cause: "Error deleting image product"})
+	}
+
+	return &finded
 }
 
 //=========likes

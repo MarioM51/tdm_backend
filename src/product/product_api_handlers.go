@@ -20,6 +20,7 @@ type IProductApiHadler interface {
 	showImage(c *gin.Context)
 	addLike(c *gin.Context)
 	removeLike(c *gin.Context)
+	deleteImage(c *gin.Context)
 }
 
 type ProductApiHadler struct {
@@ -114,9 +115,24 @@ func (ProductApiHadler) showImage(c *gin.Context) {
 	defer apiHelper.HandleError(c)
 
 	id := apiHelper.GetIntParam(c, "id")
-	finded := productServ.findImageByProductId(id)
+	finded := productServ.findImageIdImage(id)
 
 	apiHelper.ShowImageInBase64(c, finded.Base64)
+}
+
+func (ProductApiHadler) deleteImage(c *gin.Context) {
+	defer apiHelper.HandleError(c)
+
+	token := apiHelper.GetRequiredToken(c)
+	if !usrServ.CheckRol([]string{"products", "admin"}, token) {
+		panic(errorss.UnAuthUser)
+	}
+
+	id := apiHelper.GetIntParam(c, "id")
+	imageDeleted := productServ.deleteImageIdImage(id)
+
+	c.JSON(http.StatusOK, &imageDeleted)
+
 }
 
 //=================

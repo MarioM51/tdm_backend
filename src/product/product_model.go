@@ -6,12 +6,12 @@ import (
 )
 
 type ProductModel struct {
-	ID          int          `json:"id" gorm:"primaryKey"`
-	Name        string       `json:"name" gorm:"size:60"`
-	Price       int          `json:"price"`
-	Description string       `json:"description" gorm:"size:160"`
-	Likes       int          `json:"likes" gorm:"-:all"`
-	Image       ProductImage `json:"image,omitempty" gorm:"foreignKey:ID"`
+	ID          int            `json:"id" gorm:"primaryKey"`
+	Name        string         `json:"name" gorm:"size:60"`
+	Price       int            `json:"price"`
+	Description string         `json:"description" gorm:"size:160"`
+	Likes       int            `json:"likes" gorm:"-:all"`
+	Images      []ProductImage `json:"images,omitempty" gorm:"foreignKey:ID"`
 }
 
 func (ProductModel) TableName() string {
@@ -19,7 +19,8 @@ func (ProductModel) TableName() string {
 }
 
 type ProductImage struct {
-	ID        int       `json:"id_product" gorm:"primaryKey"`
+	ID        int       `json:"id_image" gorm:"primaryKey"`
+	FkProduct int       `json:"fk_product,omitempty"`
 	MimeType  string    `json:"mime_type,omitempty" gorm:"size:15"`
 	Base64    string    `json:"base64,omitempty"`
 	CreatedAt time.Time `json:"-"`
@@ -48,16 +49,19 @@ func ProductModelToArrayJSONLD(products []ProductModel) ProductsWrapperJSONLD {
 
 	var productListA = []ProductJSONLD{}
 	for _, p := range products {
+		for i := range p.Images {
+			p.Images[i].Base64 = ""
+		}
+
 		productListA = append(productListA, ProductJSONLD{
-			Type:           "Product",
-			Identifier:     strconv.Itoa(p.ID),
-			Url:            "/nothing",
-			Image:          "/nothing_yet",
-			ImageUpdatedAt: p.Image.UpdatedAt.Format(time.RFC3339),
-			Name:           p.Name,
-			Likes:          p.Likes,
-			Description:    p.Description,
-			Offer:          Offer{Type: "Offer", Price: strconv.Itoa(p.Price), PriceCurrency: "MXN"},
+			Type:        "Product",
+			Identifier:  strconv.Itoa(p.ID),
+			Url:         "/nothing",
+			Images:      p.Images,
+			Name:        p.Name,
+			Likes:       p.Likes,
+			Description: p.Description,
+			Offer:       Offer{Type: "Offer", Price: strconv.Itoa(p.Price), PriceCurrency: "MXN"},
 		})
 	}
 
@@ -84,15 +88,15 @@ type ProductsJSONLD struct {
 }
 
 type ProductJSONLD struct {
-	Type           string `json:"@type"`
-	Identifier     string `json:"identifier"`
-	Url            string `json:"url"`
-	Image          string `json:"image"`
-	ImageUpdatedAt string `json:"image_updated_at"`
-	Name           string `json:"name"`
-	Description    string `json:"description"`
-	Likes          int    `json:"likes"`
-	Offer          Offer  `json:"offers"`
+	Type           string         `json:"@type"`
+	Identifier     string         `json:"identifier"`
+	Url            string         `json:"url"`
+	Images         []ProductImage `json:"images"`
+	ImageUpdatedAt string         `json:"image_updated_at"`
+	Name           string         `json:"name"`
+	Description    string         `json:"description"`
+	Likes          int            `json:"likes"`
+	Offer          Offer          `json:"offers"`
 }
 
 type Offer struct {

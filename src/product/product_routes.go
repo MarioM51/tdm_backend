@@ -18,6 +18,7 @@ func AddApiRoutes(r *gin.Engine, prefix string) {
 	// image
 	r.POST(prefix+"/products/:id/images", productApi.saveImage)
 	r.GET(prefix+"/products/image/:id", productApi.showImage)
+	r.DELETE(prefix+"/products/image/:id", productApi.deleteImage)
 
 	//likes
 	r.POST(prefix+"/products/:id/like", productApi.addLike)

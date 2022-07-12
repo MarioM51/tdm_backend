@@ -21,8 +21,9 @@ func (ProductService) save(toSave *ProductModel) (saved *ProductModel) {
 	return saved
 }
 
-func (ProductService) saveImage(idProduct int, toSave *ProductImage) (saved *ProductImage) {
-	saved = productDao.saveImage(idProduct, toSave)
+func (ps ProductService) saveImage(idProduct int, toSave *ProductImage) (saved *ProductImage) {
+	productFinded := ps.findById(idProduct)
+	saved = productDao.saveImage(productFinded.ID, toSave)
 	return saved
 }
 
@@ -35,8 +36,17 @@ func (ProductService) findById(id int) (finded *ProductModel) {
 	return finded
 }
 
-func (ProductService) findImageByProductId(id int) (finded *ProductImage) {
-	finded = productDao.findImageByProductId(id)
+func (ProductService) findImageIdImage(idImage int) (finded *ProductImage) {
+	finded = productDao.findImageByIdImage(idImage)
+	if finded == nil {
+		panic(errorss.ErrorResponseModel{HttpStatus: 404, Cause: "Product Image not found"})
+	}
+
+	return finded
+}
+
+func (ProductService) deleteImageIdImage(idImage int) (finded *ProductImage) {
+	finded = productDao.deleteImageIdImage(idImage)
 	if finded == nil {
 		panic(errorss.ErrorResponseModel{HttpStatus: 404, Cause: "Product Image not found"})
 	}
