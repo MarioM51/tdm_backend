@@ -14,6 +14,7 @@ import (
 
 const added_secret = "treeVerde"
 const token_secret = "temporal"
+const token_expire_minutes = 60 * 4
 
 type TokenModel struct {
 	IdUser uint
@@ -78,7 +79,7 @@ func GenerateToken(id string) string {
 
 	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
 		Id:        id,
-		ExpiresAt: time.Now().Add(time.Minute * 10).Unix(),
+		ExpiresAt: time.Now().Add(time.Minute * token_expire_minutes).Unix(),
 	})
 
 	token, err := claims.SignedString([]byte(token_secret))

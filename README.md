@@ -6,6 +6,8 @@
   - [API](#api)
     - [Api Usuarios = Auth](#api-usuarios--auth)
     - [Api Productos](#api-productos)
+      - [Product likes](#product-likes)
+      - [Product image](#product-image)
     - [API blogs](#api-blogs)
     - [API Orders](#api-orders)
   - [SSR (Server side render)](#ssr-server-side-render)
@@ -131,6 +133,8 @@ curl http://192.168.1.81:80/api/products/3 \
   --include
 ```
 
+#### Product likes
+
 5, add like to product
 
 - The tokes is optional, where if this is emply the anonymous user will be used
@@ -150,6 +154,8 @@ curl http://192.168.1.81:80/api/products/1/like \
   --request "DELETE" \
   --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDUyNDM0NjEsImp0aSI6IjgyIn0.zTMVlrAwRMpaKtXqUu1-foFwqXaWdvYNlU8C05VLCHY"
 ```
+
+#### Product image
 
 7, See image product by Id Image
 
