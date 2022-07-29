@@ -20,6 +20,9 @@ func AddApiRoutes(r *gin.Engine, prefix string) {
 	r.POST(prefix+"/blogs/:id/like", blogHandler.addLike)
 	r.DELETE(prefix+"/blogs/:id/like", blogHandler.removeLike)
 
+	r.POST(prefix+"/blogs/:id/comment", blogHandler.addComment)
+	r.DELETE(prefix+"/blogs/:id/comment/:idComment", blogHandler.deleteComment)
+
 }
 
 func AddSsrRoutes(r *gin.Engine, tModels *[]helpers.TemplateModel) {

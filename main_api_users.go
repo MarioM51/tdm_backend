@@ -51,11 +51,10 @@ func main() {
 	}))
 
 	//Setup Api
-	const apiPrefix string = "/api"
-	users.AddApiRoutes(router, apiPrefix)
-	product.AddApiRoutes(router, apiPrefix)
-	blog.AddApiRoutes(router, apiPrefix)
-	orders.AddApiRoutes(router, apiPrefix)
+	users.AddApiRoutes(router, helpers.API_PREFIX)
+	product.AddApiRoutes(router, helpers.API_PREFIX)
+	blog.AddApiRoutes(router, helpers.API_PREFIX)
+	orders.AddApiRoutes(router, helpers.API_PREFIX)
 
 	//Setup server side rendering
 	templatesM := []helpers.TemplateModel{}
@@ -63,5 +62,5 @@ func main() {
 	blog.AddSsrRoutes(router, &templatesM)
 	router.HTMLRender = helpers.CreateHTMLRenderHelper(templatesM)
 
-	router.Run("192.168.1.81:80")
+	router.Run(helpers.DOMAIN + ":" + helpers.PORT)
 }

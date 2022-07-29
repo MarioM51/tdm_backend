@@ -16,6 +16,10 @@ type IBlogRepository interface {
 	findUserBlogLikes(idUser int) []LikeBlog
 	addLike(idBlog int, iduser int) int
 	removeLike(idProduct int, idUser int) int
+
+	findBlogComment(idComment int) *BlogComment
+	addComment(toAdd BlogComment) BlogComment
+	deleteComment(idComment int)
 }
 
 type BlogRepository struct {
@@ -40,6 +44,27 @@ func (br BlogRepository) findAll() *[]BlogModel {
 		likesCount := len(likes)
 		all[i].Likes = likesCount
 	}
+
+	for i := range all {
+		comments := br.findAllCommentsOfBlog(all[i].Id)
+
+		commentsAmount := len(comments)
+		all[i].CommentCount = commentsAmount
+
+		//get average rating
+		var total int = 0
+		for j := range comments {
+			total = total + comments[j].Rating
+		}
+
+		if total == 0 && commentsAmount == 0 {
+			all[i].CommentsRating = 0
+		} else {
+			all[i].CommentsRating = float32(total) / float32(commentsAmount)
+		}
+
+	}
+
 	return &all
 }
 
@@ -78,6 +103,9 @@ func (br BlogRepository) findById(id int) *BlogModel {
 	likes := br.findAllLikesOfBlog(finded.Id)
 	likesCount := len(likes)
 	finded.Likes = likesCount
+
+	comments := br.findAllCommentsOfBlog(finded.Id)
+	finded.Comments = comments
 
 	return &finded
 }
@@ -124,4 +152,35 @@ func (ps BlogRepository) removeLike(idBlog int, idUser int) int {
 
 	allLikes := ps.findAllLikesOfBlog(idBlog)
 	return len(allLikes)
+}
+
+//comments
+func (BlogRepository) findAllCommentsOfBlog(idBlog int) (allComments []BlogComment) {
+	dbHelper.DB.Where("id_blog = ?", idBlog).Find(&allComments)
+	return allComments
+}
+
+func (BlogRepository) addComment(toAdd BlogComment) BlogComment {
+	tx := dbHelper.DB.Create(&toAdd)
+	if tx.Error != nil {
+		panic(errorss.ErrorResponseModel{HttpStatus: 500, Cause: "Error saving comment blog"})
+	}
+
+	return toAdd
+}
+
+func (BlogRepository) findBlogComment(idComment int) (finded *BlogComment) {
+	dbHelper.DB.First(&finded, idComment)
+	if finded.Id == 0 {
+		return nil
+	}
+
+	return finded
+}
+
+func (BlogRepository) deleteComment(idComment int) {
+	tx := dbHelper.DB.Delete(&BlogComment{}, idComment)
+	if tx.Error != nil {
+		panic(errorss.ErrorResponseModel{HttpStatus: 500, Cause: "Error deleting blog comment"})
+	}
 }

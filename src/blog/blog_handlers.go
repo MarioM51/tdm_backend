@@ -20,6 +20,9 @@ type IBlogHandler interface {
 
 	addLike(c *gin.Context)
 	removeLike(c *gin.Context)
+	addComment(c *gin.Context)
+
+	deleteComment(c *gin.Context)
 }
 
 type BlogHandler struct {
@@ -134,4 +137,46 @@ func (BlogHandler) removeLike(c *gin.Context) {
 	likesCount := blogS.removeLike(idBlog, int(token.IdUser))
 
 	c.JSON(http.StatusOK, gin.H{"likes": likesCount})
+}
+
+//Comments ============================
+
+func (BlogHandler) addComment(c *gin.Context) {
+	defer apiHelper.HandleError(c)
+
+	token := apiHelper.GetRequiredToken(c)
+	idBlog := apiHelper.GetIntParam(c, "id")
+
+	commentReceived := BlogComment{}
+	if err := c.BindJSON(&commentReceived); err != nil {
+		panic(errorss.ErrorResponseModel{HttpStatus: 400, Cause: "bad format of blog comment"})
+	}
+
+	commentReceived.IdBlog = idBlog
+	commentReceived.IdUser = int(token.IdUser)
+
+	commentAdded := blogS.addComment(commentReceived)
+
+	c.JSON(http.StatusOK, commentAdded)
+}
+
+func (BlogHandler) deleteComment(c *gin.Context) {
+	defer apiHelper.HandleError(c)
+
+	token := apiHelper.GetRequiredToken(c)
+	idBlog := apiHelper.GetIntParam(c, "id")
+	idComment := apiHelper.GetIntParam(c, "idComment")
+
+	commentToDelete := BlogComment{
+		Id:     idComment,
+		IdUser: int(token.IdUser),
+		IdBlog: idBlog,
+	}
+
+	if usrServ.CheckRol([]string{"blogs", "admin"}, token) {
+		commentToDelete.IdUser = 666777
+	}
+
+	commentDeleted := blogS.deleteComment(commentToDelete)
+	c.JSON(http.StatusOK, commentDeleted)
 }

@@ -9,6 +9,9 @@
       - [Product likes](#product-likes)
       - [Product image](#product-image)
     - [API blogs](#api-blogs)
+      - [Blog Images](#blog-images)
+      - [Blog Likes](#blog-likes)
+      - [Blog Comments](#blog-comments)
     - [API Orders](#api-orders)
   - [SSR (Server side render)](#ssr-server-side-render)
     - [Products](#products)
@@ -196,13 +199,6 @@ curl http://192.168.1.81:80/api/blogs --request "GET" | json_pp
 curl http://192.168.1.81:80/api/blogs/2 --request "GET" | json_pp
 ```
 
-3, show image
-
-```r
-#Use in the browser
-http://192.168.1.81:80/api/blogs/1/image
-```
-
 4, add blog
 
 - id blog will be ignored
@@ -232,6 +228,19 @@ curl http://192.168.1.81:80/api/blogs/3 \
   | json_pp
 ```
 
+#### Blog Images
+
+Note: The image is addded and updated via base64 in the correspondenting requests for that
+
+3, show image
+
+```r
+#Use in the browser
+http://192.168.1.81:80/api/blogs/1/image
+```
+
+#### Blog Likes
+
 5, add like to blog
 
 - The tokes is optional, where if this is emply the anonymous user will be used
@@ -250,6 +259,29 @@ curl http://192.168.1.81:80/api/blogs/2/like \
 curl http://192.168.1.81:80/api/blogs/2/like \
   --request "DELETE" \
   --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDUyNDM0NjEsImp0aSI6IjgyIn0.zTMVlrAwRMpaKtXqUu1-foFwqXaWdvYNlU8C05VLCHY"
+```
+
+#### Blog Comments
+
+Only logged user can comment.
+
+1, Add comment
+
+- The id user is get from the token
+
+```r
+curl http://192.168.1.81:80/api/blogs/1/comment \
+  --request "POST" \
+  --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTg5ODYwNTcsImp0aSI6Ijc5In0.QK0ltvGbTp5V3PoZj-gUiFjHGOPiGYu8n1YU83J1fNQ" \
+  --data '{ "IdBlog": 1, "text": "First comment", "rating": 3 }'
+```
+
+2, Delete comment
+
+```r
+curl http://192.168.1.81:80/api/blogs/1/comment/9 \
+  --request "DELETE" \
+  --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTg5ODYwNTcsImp0aSI6Ijc5In0.QK0ltvGbTp5V3PoZj-gUiFjHGOPiGYu8n1YU83J1fNQ"
 ```
 
 ### API Orders

@@ -13,6 +13,9 @@ type IBlogService interface {
 
 	addLike(idBlog int, IdUser int) int
 	removeLike(idBlog int, IdUser int) int
+
+	addComment(toAdd BlogComment) BlogComment
+	deleteComment(toDel BlogComment) BlogComment
 }
 
 type BlogService struct {
@@ -94,4 +97,31 @@ func (bs BlogService) removeLike(idProduct int, idUser int) int {
 	}
 	likesCount := blogRepo.removeLike(idProduct, idUser)
 	return likesCount
+}
+
+func (bs BlogService) addComment(toAdd BlogComment) BlogComment {
+	bs.findById(toAdd.IdBlog)
+
+	commentAdded := blogRepo.addComment(toAdd)
+
+	return commentAdded
+}
+
+func (bs BlogService) deleteComment(toDel BlogComment) BlogComment {
+	bs.findById(toDel.IdBlog)
+
+	finded := blogRepo.findBlogComment(toDel.Id)
+	if finded == nil {
+		panic(errorss.ErrorResponseModel{HttpStatus: 500, Cause: "Error deleting blog comment"})
+	}
+
+	if toDel.IdUser != 666777 {
+		if finded.IdUser != toDel.IdUser {
+			panic(errorss.ErrorResponseModel{HttpStatus: 403, Cause: "The comment doesn`t belong to the user"})
+		}
+	}
+
+	blogRepo.deleteComment(toDel.Id)
+
+	return *finded
 }
