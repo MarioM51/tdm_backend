@@ -6,6 +6,7 @@ import (
 	"time"
 	"users_api/src/blog"
 	"users_api/src/helpers"
+	"users_api/src/home"
 	"users_api/src/orders"
 	"users_api/src/product"
 	"users_api/src/users"
@@ -60,6 +61,7 @@ func main() {
 	templatesM := []helpers.TemplateModel{}
 	product.AddSsrRoutes(router, &templatesM)
 	blog.AddSsrRoutes(router, &templatesM)
+	home.AddSsrRoutes(router, &templatesM)
 	router.HTMLRender = helpers.CreateHTMLRenderHelper(templatesM)
 
 	router.Run(helpers.DOMAIN + ":" + helpers.PORT)
