@@ -1,17 +1,22 @@
 {{template "base" .}}
 
 {{define "title"}}
-    Details product
-{{end}}
+{{.PRODUCT.Name}} - Mi Tienda
+{{ end }}
 
 {{define "content"}}
-    <h2 class="mt-5">Product names</h2>
-    <hr>
-    Some content
-{{end}}
+<script id="product_ld_json" type="application/ld+json">
+  {{.PRODUCT}}
+</script>
+<wc-layout>
+  <wc-product-client-details id="content-page"></wc-product-client-details>
+</wc-layout>
+{{ end }}
 
 {{define "js"}}
-<script>
-  console.log("Hi from details products")
-</script>
-{{end}}
+<script defer src="/static/web_components/wc-layout.js"></script>
+<script
+  defer
+  src="/static/web_components/wc-product-client-details.js"
+></script>
+{{ end }}

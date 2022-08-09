@@ -1,7 +1,6 @@
 package product
 
 import (
-	"strconv"
 	"time"
 )
 
@@ -12,6 +11,21 @@ type ProductModel struct {
 	Description string         `json:"description" gorm:"size:160"`
 	Likes       int            `json:"likes" gorm:"-:all"`
 	Images      []ProductImage `json:"images,omitempty" gorm:"foreignKey:ID"`
+	Comments    []Comment      `json:"comments,omitempty" gorm:"-:all"`
+	/*
+		category
+			material
+		weight: = KGM
+		: {
+			"@type": "quantitativeValue"
+			"unitCode": "KGM"
+			"value": 0.50
+		}
+			width
+			height
+			depth
+
+	*/
 }
 
 func (ProductModel) TableName() string {
@@ -43,77 +57,16 @@ func (LikeProduct) TableName() string {
 	return "product_likes"
 }
 
-/* JSON-LD */
-
-func ProductModelToArrayJSONLD(products []ProductModel) ProductsWrapperJSONLD {
-
-	var productListA = []ProductJSONLD{}
-	for _, p := range products {
-		for i := range p.Images {
-			p.Images[i].Base64 = ""
-		}
-
-		productListA = append(productListA, ProductJSONLD{
-			Type:        "Product",
-			Identifier:  strconv.Itoa(p.ID),
-			Url:         "/nothing",
-			Images:      p.Images,
-			Name:        p.Name,
-			Likes:       p.Likes,
-			Description: p.Description,
-			Offer:       Offer{Type: "Offer", Price: strconv.Itoa(p.Price), PriceCurrency: "MXN"},
-		})
-	}
-
-	return ProductsWrapperJSONLD{
-		Val: ProductsJSONLD{
-			Context:         "https://schema.org",
-			Type:            "ItemList",
-			NumberOfItems:   strconv.Itoa(len(products)),
-			ItemListElement: productListA,
-		},
-	}
-
+type Comment struct {
+	Id        int       `json:"id" gorm:"primaryKey"`
+	IdUser    int       `json:"idUser"`
+	IdTarget  int       `json:"idTarget"`
+	Content   string    `json:"content"`
+	Stars     int       `json:"stars"`
+	CreatedAt time.Time `json:"created_at"`
+	DeletedAt time.Time `json:"-"`
 }
 
-type ProductsWrapperJSONLD struct {
-	Val ProductsJSONLD
+func (Comment) TableName() string {
+	return "product_comments"
 }
-
-type ProductsJSONLD struct {
-	Context         string          `json:"@context"`
-	Type            string          `json:"@type"`
-	NumberOfItems   string          `json:"numberOfItems"`
-	ItemListElement []ProductJSONLD `json:"itemListElement"`
-}
-
-type ProductJSONLD struct {
-	Type           string         `json:"@type"`
-	Identifier     string         `json:"identifier"`
-	Url            string         `json:"url"`
-	Images         []ProductImage `json:"images"`
-	ImageUpdatedAt string         `json:"image_updated_at"`
-	Name           string         `json:"name"`
-	Description    string         `json:"description"`
-	Likes          int            `json:"likes"`
-	Offer          Offer          `json:"offers"`
-}
-
-type Offer struct {
-	Type          string `json:"@type"`
-	Price         string `json:"price"`
-	PriceCurrency string `json:"priceCurrency"`
-}
-
-/*
-var productList = []ProductJSONLD{
-	{
-		Type:        "Product",
-		Identifier:  "1",
-		Url:         "products/1",
-		Image:       "products/1/image",
-		Name:        "Tompo de llavero",
-		Description: "Trompo pequeño de madera que se puede usar como llavero",
-		Offer:       Offer{Type: "Offer", Price: "25", PriceCurrency: "MXN"},
-	},
-*/

@@ -21,6 +21,9 @@ type IProductApiHadler interface {
 	addLike(c *gin.Context)
 	removeLike(c *gin.Context)
 	deleteImage(c *gin.Context)
+
+	deleteComment(c *gin.Context)
+	addComment(c *gin.Context)
 }
 
 type ProductApiHadler struct {
@@ -32,14 +35,14 @@ var usrServ users.IUserService = users.UserService{}
 var productServ = ProductService{}
 
 func (ProductApiHadler) findAll(c *gin.Context) {
-	defer apiHelper.HandleError(c)
+	defer apiHelper.HandleApiError(c)
 
 	allProducts := productServ.findAll()
 	c.JSON(http.StatusOK, allProducts)
 }
 
 func (ProductApiHadler) add(c *gin.Context) {
-	defer apiHelper.HandleError(c)
+	defer apiHelper.HandleApiError(c)
 
 	token := apiHelper.GetRequiredToken(c)
 	if !usrServ.CheckRol([]string{"products", "admin"}, token) {
@@ -54,7 +57,7 @@ func (ProductApiHadler) add(c *gin.Context) {
 }
 
 func (ProductApiHadler) delete(c *gin.Context) {
-	defer apiHelper.HandleError(c)
+	defer apiHelper.HandleApiError(c)
 
 	token := apiHelper.GetRequiredToken(c)
 	if !usrServ.CheckRol([]string{"products", "admin"}, token) {
@@ -69,7 +72,7 @@ func (ProductApiHadler) delete(c *gin.Context) {
 }
 
 func (ProductApiHadler) update(c *gin.Context) {
-	defer apiHelper.HandleError(c)
+	defer apiHelper.HandleApiError(c)
 
 	token := apiHelper.GetRequiredToken(c)
 	if !usrServ.CheckRol([]string{"products", "admin"}, token) {
@@ -84,7 +87,7 @@ func (ProductApiHadler) update(c *gin.Context) {
 }
 
 func (ProductApiHadler) saveImage(c *gin.Context) {
-	defer apiHelper.HandleError(c)
+	defer apiHelper.HandleApiError(c)
 
 	id := apiHelper.GetIntParam(c, "id")
 
@@ -112,7 +115,7 @@ func (ProductApiHadler) saveImage(c *gin.Context) {
 }
 
 func (ProductApiHadler) showImage(c *gin.Context) {
-	defer apiHelper.HandleError(c)
+	defer apiHelper.HandleApiError(c)
 
 	id := apiHelper.GetIntParam(c, "id")
 	finded := productServ.findImageIdImage(id)
@@ -121,7 +124,7 @@ func (ProductApiHadler) showImage(c *gin.Context) {
 }
 
 func (ProductApiHadler) deleteImage(c *gin.Context) {
-	defer apiHelper.HandleError(c)
+	defer apiHelper.HandleApiError(c)
 
 	token := apiHelper.GetRequiredToken(c)
 	if !usrServ.CheckRol([]string{"products", "admin"}, token) {
@@ -161,7 +164,7 @@ func showProduct(c *gin.Context, p *ProductModel) {
 // likes
 
 func (ProductApiHadler) addLike(c *gin.Context) {
-	defer apiHelper.HandleError(c)
+	defer apiHelper.HandleApiError(c)
 
 	token := apiHelper.GetOptionalToken(c)
 
@@ -173,7 +176,7 @@ func (ProductApiHadler) addLike(c *gin.Context) {
 }
 
 func (ProductApiHadler) removeLike(c *gin.Context) {
-	defer apiHelper.HandleError(c)
+	defer apiHelper.HandleApiError(c)
 
 	token := apiHelper.GetOptionalToken(c)
 
@@ -182,4 +185,46 @@ func (ProductApiHadler) removeLike(c *gin.Context) {
 	likesCount := productServ.removeLike(id, int(token.IdUser))
 
 	c.JSON(http.StatusOK, gin.H{"likes": likesCount})
+}
+
+//Comments ============================
+
+func (ProductApiHadler) addComment(c *gin.Context) {
+	defer apiHelper.HandleApiError(c)
+
+	token := apiHelper.GetRequiredToken(c)
+	idTarget := apiHelper.GetIntParam(c, "id")
+
+	commentReceived := Comment{}
+	if err := c.BindJSON(&commentReceived); err != nil {
+		panic(errorss.ErrorResponseModel{HttpStatus: 400, Cause: "bad format of product comment"})
+	}
+
+	commentReceived.IdTarget = idTarget
+	commentReceived.IdUser = int(token.IdUser)
+
+	commentAdded := productServ.addComment(commentReceived)
+
+	c.JSON(http.StatusOK, commentAdded)
+}
+
+func (ProductApiHadler) deleteComment(c *gin.Context) {
+	defer apiHelper.HandleApiError(c)
+
+	token := apiHelper.GetRequiredToken(c)
+	idTarget := apiHelper.GetIntParam(c, "id")
+	idComment := apiHelper.GetIntParam(c, "idComment")
+
+	commentToDelete := Comment{
+		Id:       idComment,
+		IdUser:   int(token.IdUser),
+		IdTarget: idTarget,
+	}
+
+	if usrServ.CheckRol([]string{"products", "admin"}, token) {
+		commentToDelete.IdUser = 666777
+	}
+
+	commentDeleted := productServ.deleteComment(commentToDelete)
+	c.JSON(http.StatusOK, commentDeleted)
 }

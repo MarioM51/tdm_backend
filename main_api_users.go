@@ -58,11 +58,27 @@ func main() {
 	orders.AddApiRoutes(router, helpers.API_PREFIX)
 
 	//Setup server side rendering
-	templatesM := []helpers.TemplateModel{}
-	product.AddSsrRoutes(router, &templatesM)
-	blog.AddSsrRoutes(router, &templatesM)
-	home.AddSsrRoutes(router, &templatesM)
-	router.HTMLRender = helpers.CreateHTMLRenderHelper(templatesM)
+	templates := []helpers.TemplateModel{}
+	//common templates
+	commonTemplates := []helpers.TemplateModel{
+		{
+			Name:       "not-found",
+			PagePath:   "templates/common/not-found.gohtml",
+			LayoutPath: helpers.LAYOUT_A,
+		},
+		{
+			Name:       "fatal-error",
+			PagePath:   "templates/common/fatal-error.gohtml",
+			LayoutPath: helpers.LAYOUT_A,
+		},
+	}
+	templates = append(templates, commonTemplates...)
+
+	//specific templates
+	product.AddSsrRoutes(router, &templates)
+	blog.AddSsrRoutes(router, &templates)
+	home.AddSsrRoutes(router, &templates)
+	router.HTMLRender = helpers.CreateHTMLRenderHelper(templates)
 
 	router.Run(helpers.DOMAIN + ":" + helpers.PORT)
 }

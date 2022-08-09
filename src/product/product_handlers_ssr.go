@@ -23,5 +23,12 @@ func (ProductSsrHadler) findAll(c *gin.Context) {
 }
 
 func (ProductSsrHadler) findDetails(c *gin.Context) {
-	c.HTML(http.StatusOK, "product-details", gin.H{"Products": "hi"})
+	defer apiHelper.HandleSSRError(c)
+	id := apiHelper.GetLastNumberInParam(c, "name")
+	productDetails := productServ.findById(id)
+	productDetailsLDJson := ProductModelToJSONLD(productDetails, false)
+	data := gin.H{
+		"PRODUCT": productDetailsLDJson,
+	}
+	c.HTML(http.StatusOK, "product-details", data)
 }

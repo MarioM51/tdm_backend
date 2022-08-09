@@ -102,3 +102,30 @@ func (ps ProductService) removeLike(idProduct int, idUser int) int {
 	likesCount := productDao.removeLike(idProduct, idUser)
 	return likesCount
 }
+
+func (bs ProductService) addComment(toAdd Comment) Comment {
+	bs.findById(toAdd.IdTarget)
+
+	commentAdded := productDao.addComment(toAdd)
+
+	return commentAdded
+}
+
+func (bs ProductService) deleteComment(toDel Comment) Comment {
+	bs.findById(toDel.IdTarget)
+
+	finded := productDao.findProductComment(toDel.Id)
+	if finded == nil {
+		panic(errorss.ErrorResponseModel{HttpStatus: 500, Cause: "Error deleting blog comment"})
+	}
+
+	if toDel.IdUser != 666777 {
+		if finded.IdUser != toDel.IdUser {
+			panic(errorss.ErrorResponseModel{HttpStatus: 403, Cause: "The comment doesn`t belong to the user"})
+		}
+	}
+
+	productDao.deleteComment(toDel.Id)
+
+	return *finded
+}

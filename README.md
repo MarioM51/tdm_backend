@@ -8,6 +8,7 @@
     - [Api Productos](#api-productos)
       - [Product likes](#product-likes)
       - [Product image](#product-image)
+      - [Product comments](#product-comments)
     - [API blogs](#api-blogs)
       - [Blog Images](#blog-images)
       - [Blog Likes](#blog-likes)
@@ -183,6 +184,25 @@ curl 'http://192.168.1.81/api/products/2/images' \
 curl 'http://192.168.1.81/api/products/image/3' \
   --request "DELETE" \
   --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTczNDc5MjcsImp0aSI6Ijc5In0.hJDKQw1JTP4XD_vRix4u5hbM89lTbgSpSdP_1FqlhU8"
+```
+
+#### Product comments
+
+- The id user is get from the token
+
+```r
+curl http://192.168.1.81:80/api/products/1/comment \
+  --request "POST" \
+  --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTg5ODYwNTcsImp0aSI6Ijc5In0.QK0ltvGbTp5V3PoZj-gUiFjHGOPiGYu8n1YU83J1fNQ" \
+  --data '{ "IdBlog": 1, "text": "First comment", "rating": 3 }'
+```
+
+2, Delete comment
+
+```r
+curl http://192.168.1.81:80/api/products/1/comment/9 \
+  --request "DELETE" \
+  --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTg5ODYwNTcsImp0aSI6Ijc5In0.QK0ltvGbTp5V3PoZj-gUiFjHGOPiGYu8n1YU83J1fNQ"
 ```
 
 ### API blogs
@@ -361,9 +381,21 @@ curl http://192.168.1.81:80/api/orders/findByUserLogged \
 http://192.168.1.81:80/products
 ```
 
+```r
+#Use in the browser
+#El id del producto debe estar al final y le debe de prececeder un guion medio (-)
+http://192.168.1.81/products/nombre-producto-11
+```
+
 ### Blogs
 
 ```r
 #Use in the browser
 http://192.168.1.81:80/blogs
+```
+
+```r
+#Use in the browser
+#The Blog's ID must be at the end of the url, and must be precedided by a middle dash (-)
+http://192.168.1.81/blogs/el-titulo-del-blog-1
 ```

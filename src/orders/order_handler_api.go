@@ -15,7 +15,7 @@ var apiHelper = helpers.ApiHelper{}
 var orderServ = OrderService{}
 
 func (OrderHandlerApi) save(c *gin.Context) {
-	defer apiHelper.HandleError(c)
+	defer apiHelper.HandleApiError(c)
 
 	/*
 		token := apiHelper.GetRequiredToken(c)
@@ -42,7 +42,7 @@ func (OrderHandlerApi) save(c *gin.Context) {
 }
 
 func (OrderHandlerApi) findByIds(c *gin.Context) {
-	defer apiHelper.HandleError(c)
+	defer apiHelper.HandleApiError(c)
 
 	var ids []int
 	if err := c.BindJSON(&ids); err != nil {
@@ -56,7 +56,7 @@ func (OrderHandlerApi) findByIds(c *gin.Context) {
 }
 
 func (OrderHandlerApi) deleteById(c *gin.Context) {
-	defer apiHelper.HandleError(c)
+	defer apiHelper.HandleApiError(c)
 
 	id := apiHelper.GetIntParam(c, "id")
 	orderDeleted := orderServ.deleteById(id)
@@ -65,7 +65,7 @@ func (OrderHandlerApi) deleteById(c *gin.Context) {
 }
 
 func (OrderHandlerApi) confirm(c *gin.Context) {
-	defer apiHelper.HandleError(c)
+	defer apiHelper.HandleApiError(c)
 
 	id := apiHelper.GetIntParam(c, "id")
 
@@ -77,7 +77,7 @@ func (OrderHandlerApi) confirm(c *gin.Context) {
 }
 
 func (OrderHandlerApi) accept(c *gin.Context) {
-	defer apiHelper.HandleError(c)
+	defer apiHelper.HandleApiError(c)
 
 	id := apiHelper.GetIntParam(c, "id")
 
@@ -92,7 +92,7 @@ func (OrderHandlerApi) accept(c *gin.Context) {
 }
 
 func (OrderHandlerApi) findAll(c *gin.Context) {
-	defer apiHelper.HandleError(c)
+	defer apiHelper.HandleApiError(c)
 
 	token := apiHelper.GetRequiredToken(c)
 	if !usrServ.CheckRol([]string{"admin"}, token) {
@@ -104,7 +104,7 @@ func (OrderHandlerApi) findAll(c *gin.Context) {
 }
 
 func (OrderHandlerApi) findByUserLogged(c *gin.Context) {
-	defer apiHelper.HandleError(c)
+	defer apiHelper.HandleApiError(c)
 	token := apiHelper.GetRequiredToken(c)
 	idUser := token.IdUser
 

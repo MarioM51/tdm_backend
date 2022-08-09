@@ -99,6 +99,8 @@ func (bs BlogService) removeLike(idProduct int, idUser int) int {
 	return likesCount
 }
 
+// ===============0 Comment
+
 func (bs BlogService) addComment(toAdd BlogComment) BlogComment {
 	bs.findById(toAdd.IdBlog)
 

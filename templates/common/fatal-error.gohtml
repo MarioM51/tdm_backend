@@ -1,0 +1,16 @@
+{{define "title"}}{{.BLOG_JSONLD.Headline}}{{ end }}
+
+{{define "content"}}
+<script id="blog_jsonld" type="application/ld+json">
+  {{.BLOG_JSONLD}}
+</script>
+<wc-layout>
+  <div id="content-page">
+    <h1 class="text-2xl font-bold">Error inesperado, intente mas tarde</h1>
+  </div>
+</wc-layout>
+{{ end }}
+
+{{define "js"}}
+<script defer src="/static/web_components/wc-layout.js"></script>
+{{ end }}

@@ -2,8 +2,6 @@ package blog
 
 import (
 	"net/http"
-	"strconv"
-	"users_api/src/errorss"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,7 +14,7 @@ type IBlogSSRHandler interface {
 type BlogSSRHandler struct{}
 
 func (BlogSSRHandler) findAll(c *gin.Context) {
-	defer apiHelper.HandleError(c)
+	defer apiHelper.HandleApiError(c)
 
 	var allBlogs = blogS.findAll()
 
@@ -27,15 +25,8 @@ func (BlogSSRHandler) findAll(c *gin.Context) {
 }
 
 func (BlogSSRHandler) findById(c *gin.Context) {
-	defer apiHelper.HandleError(c)
-
-	name := c.Param("name")
-	rawId := name[len(name)-1:]
-	id, err := strconv.Atoi(rawId)
-	if err != nil {
-		panic(errorss.ErrorResponseModel{HttpStatus: 400, Cause: "Url bad formated"})
-	}
-
+	defer apiHelper.HandleApiError(c)
+	id := apiHelper.GetLastNumberInParam(c, "name")
 	var finded = blogS.findById(id)
 	finded.Thumbnail = ""
 

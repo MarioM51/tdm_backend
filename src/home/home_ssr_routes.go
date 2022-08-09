@@ -9,7 +9,7 @@ import (
 type HomeSSRHandler struct{}
 
 func (HomeSSRHandler) home(c *gin.Context) {
-	defer apiHelper.HandleError(c)
+	defer apiHelper.HandleApiError(c)
 	const aa = "hello"
 	c.HTML(http.StatusOK, "home", gin.H{"HI": aa})
 

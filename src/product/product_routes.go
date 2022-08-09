@@ -23,11 +23,15 @@ func AddApiRoutes(r *gin.Engine, prefix string) {
 	//likes
 	r.POST(prefix+"/products/:id/like", productApi.addLike)
 	r.DELETE(prefix+"/products/:id/like", productApi.removeLike)
+
+	//comments
+	r.POST(prefix+"/products/:id/comment", productApi.addComment)
+	r.DELETE(prefix+"/products/:id/comment/:idComment", productApi.deleteComment)
 }
 
 func AddSsrRoutes(r *gin.Engine, tModels *[]helpers.TemplateModel) {
 	r.GET("/products", productSsrhandler.findAll)
-	r.GET("/products-details", productSsrhandler.findDetails)
+	r.GET("/products/:name", productSsrhandler.findDetails)
 
 	templatesProducts := []helpers.TemplateModel{
 		{

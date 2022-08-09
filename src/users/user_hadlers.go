@@ -25,7 +25,7 @@ var usrServ IUserService = UserService{}
 var apiHelper = helpers.ApiHelper{}
 
 func (UserHadler) getAll(c *gin.Context) {
-	defer apiHelper.HandleError(c)
+	defer apiHelper.HandleApiError(c)
 
 	token := apiHelper.GetRequiredToken(c)
 	if !usrServ.CheckRol([]string{"admin"}, token) {
@@ -37,7 +37,7 @@ func (UserHadler) getAll(c *gin.Context) {
 }
 
 func (UserHadler) add(c *gin.Context) {
-	defer apiHelper.HandleError(c)
+	defer apiHelper.HandleApiError(c)
 
 	newUser := getUser(c)
 	userAdded := usrServ.save(*newUser)
@@ -45,7 +45,7 @@ func (UserHadler) add(c *gin.Context) {
 }
 
 func (UserHadler) getById(c *gin.Context) {
-	defer apiHelper.HandleError(c)
+	defer apiHelper.HandleApiError(c)
 	token := apiHelper.GetRequiredToken(c)
 	id := apiHelper.GetIntParam(c, "id")
 
@@ -60,7 +60,7 @@ func (UserHadler) getById(c *gin.Context) {
 }
 
 func (UserHadler) update(c *gin.Context) {
-	defer apiHelper.HandleError(c)
+	defer apiHelper.HandleApiError(c)
 
 	token := apiHelper.GetRequiredToken(c)
 	newInfo := getUser(c)
@@ -80,7 +80,7 @@ func (UserHadler) update(c *gin.Context) {
 }
 
 func (UserHadler) deleteById(c *gin.Context) {
-	defer apiHelper.HandleError(c)
+	defer apiHelper.HandleApiError(c)
 
 	token := apiHelper.GetRequiredToken(c)
 	if !usrServ.CheckRol([]string{"admin"}, token) {
@@ -93,7 +93,7 @@ func (UserHadler) deleteById(c *gin.Context) {
 }
 
 func (UserHadler) activate(c *gin.Context) {
-	defer apiHelper.HandleError(c)
+	defer apiHelper.HandleApiError(c)
 
 	id := apiHelper.GetIntParam(c, "id")
 	code := c.Param("code")
@@ -109,7 +109,7 @@ func (UserHadler) activate(c *gin.Context) {
 }
 
 func (UserHadler) login(c *gin.Context) {
-	defer apiHelper.HandleError(c)
+	defer apiHelper.HandleApiError(c)
 	toLoggin := getUser(c)
 
 	if toLoggin.Password == "" || toLoggin.Email == "" {

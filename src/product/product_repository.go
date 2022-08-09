@@ -29,9 +29,7 @@ func (pr ProductRepository) findAll() *[]ProductModel {
 
 	//add image struct only with the id
 	for i := range allProducts {
-		allImages := []ProductImage{}
-		dbHelper.DB.Select("id, updated_at").Where("fk_product = ?", allProducts[i].ID).Find(&allImages)
-		allProducts[i].Images = allImages
+		pr.findProductImages(&allProducts[i])
 	}
 
 	//add num of likes
@@ -43,6 +41,13 @@ func (pr ProductRepository) findAll() *[]ProductModel {
 	}
 
 	return &allProducts
+}
+
+func (ProductRepository) findProductImages(p *ProductModel) {
+	//dbHelper.DB.Create(toSave)
+	allImages := []ProductImage{}
+	dbHelper.DB.Select("id, updated_at").Where("fk_product = ?", p.ID).Find(&allImages)
+	p.Images = allImages
 }
 
 func (ProductRepository) save(toSave *ProductModel) *ProductModel {
@@ -59,9 +64,12 @@ func (pr ProductRepository) findById(id int) (finded *ProductModel) {
 		return nil
 	}
 
+	pr.findProductImages(finded)
 	likes := pr.findAllLikesOfProduct(finded.ID)
 	countLikes := len(likes)
 	finded.Likes = countLikes
+
+	finded.Comments = pr.findAllCommentsOfProduct(finded.ID)
 
 	return finded
 }
@@ -154,4 +162,35 @@ func (ps ProductRepository) removeLike(idProduct int, idUser int) int {
 
 	allLikes := ps.findAllLikesOfProduct(idProduct)
 	return len(allLikes)
+}
+
+//=========comment
+func (ProductRepository) findAllCommentsOfProduct(idProduct int) (comments []Comment) {
+	dbHelper.DB.Where("id_target = ?", idProduct).Find(&comments)
+	return comments
+}
+
+func (ProductRepository) addComment(toAdd Comment) Comment {
+	tx := dbHelper.DB.Create(&toAdd)
+	if tx.Error != nil {
+		panic(errorss.ErrorResponseModel{HttpStatus: 500, Cause: "Error saving comment product"})
+	}
+
+	return toAdd
+}
+
+func (ProductRepository) findProductComment(idComment int) (finded *Comment) {
+	dbHelper.DB.First(&finded, idComment)
+	if finded.Id == 0 {
+		return nil
+	}
+
+	return finded
+}
+
+func (ProductRepository) deleteComment(idComment int) {
+	tx := dbHelper.DB.Delete(&Comment{}, idComment)
+	if tx.Error != nil {
+		panic(errorss.ErrorResponseModel{HttpStatus: 500, Cause: "Error deleting product comment"})
+	}
 }

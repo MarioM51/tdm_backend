@@ -33,13 +33,13 @@ var blogS IBlogService = BlogService{}
 var apiHelper = helpers.ApiHelper{}
 
 func (BlogHandler) findAll(c *gin.Context) {
-	defer apiHelper.HandleError(c)
+	defer apiHelper.HandleApiError(c)
 	var allBlogs = blogS.findAll()
 	c.JSON(http.StatusOK, allBlogs)
 }
 
 func (BlogHandler) findById(c *gin.Context) {
-	defer apiHelper.HandleError(c)
+	defer apiHelper.HandleApiError(c)
 	idBlog := apiHelper.GetIntParam(c, "id")
 	finded := blogS.findById(idBlog)
 	finded.Thumbnail = ""
@@ -48,7 +48,7 @@ func (BlogHandler) findById(c *gin.Context) {
 }
 
 func (BlogHandler) showThumbnail(c *gin.Context) {
-	defer apiHelper.HandleError(c)
+	defer apiHelper.HandleApiError(c)
 
 	idBlog := apiHelper.GetIntParam(c, "id")
 	finded := blogS.findById(idBlog)
@@ -60,7 +60,7 @@ func (BlogHandler) showThumbnail(c *gin.Context) {
 }
 
 func (BlogHandler) save(c *gin.Context) {
-	defer apiHelper.HandleError(c)
+	defer apiHelper.HandleApiError(c)
 
 	token := apiHelper.GetRequiredToken(c)
 	if !usrServ.CheckRol([]string{"blogs", "admin"}, token) {
@@ -73,7 +73,7 @@ func (BlogHandler) save(c *gin.Context) {
 }
 
 func (BlogHandler) update(c *gin.Context) {
-	defer apiHelper.HandleError(c)
+	defer apiHelper.HandleApiError(c)
 
 	token := apiHelper.GetRequiredToken(c)
 	if !usrServ.CheckRol([]string{"blogs", "admin"}, token) {
@@ -86,7 +86,7 @@ func (BlogHandler) update(c *gin.Context) {
 }
 
 func (BlogHandler) deleteById(c *gin.Context) {
-	defer apiHelper.HandleError(c)
+	defer apiHelper.HandleApiError(c)
 
 	token := apiHelper.GetRequiredToken(c)
 	if !usrServ.CheckRol([]string{"blogs", "admin"}, token) {
@@ -116,7 +116,7 @@ func showBlog(c *gin.Context, p *BlogModel) {
 }
 
 func (BlogHandler) addLike(c *gin.Context) {
-	defer apiHelper.HandleError(c)
+	defer apiHelper.HandleApiError(c)
 
 	token := apiHelper.GetOptionalToken(c)
 
@@ -128,7 +128,7 @@ func (BlogHandler) addLike(c *gin.Context) {
 }
 
 func (BlogHandler) removeLike(c *gin.Context) {
-	defer apiHelper.HandleError(c)
+	defer apiHelper.HandleApiError(c)
 
 	token := apiHelper.GetOptionalToken(c)
 
@@ -142,7 +142,7 @@ func (BlogHandler) removeLike(c *gin.Context) {
 //Comments ============================
 
 func (BlogHandler) addComment(c *gin.Context) {
-	defer apiHelper.HandleError(c)
+	defer apiHelper.HandleApiError(c)
 
 	token := apiHelper.GetRequiredToken(c)
 	idBlog := apiHelper.GetIntParam(c, "id")
@@ -161,7 +161,7 @@ func (BlogHandler) addComment(c *gin.Context) {
 }
 
 func (BlogHandler) deleteComment(c *gin.Context) {
-	defer apiHelper.HandleError(c)
+	defer apiHelper.HandleApiError(c)
 
 	token := apiHelper.GetRequiredToken(c)
 	idBlog := apiHelper.GetIntParam(c, "id")

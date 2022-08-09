@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"mime/multipart"
 	"strconv"
+	"strings"
 	"users_api/src/crypto"
 	"users_api/src/errorss"
 
@@ -25,7 +26,18 @@ func (ApiHelper) GetIntParam(c *gin.Context, paramName string) int {
 	return id
 }
 
-func (ApiHelper) HandleError(c *gin.Context) {
+func (ApiHelper) GetLastNumberInParam(c *gin.Context, paramName string) int {
+	name := c.Param(paramName)
+	nameSplit := strings.Split(name, "-")
+	lastInNameSplit := nameSplit[len(nameSplit)-1]
+	id, err := strconv.Atoi(lastInNameSplit)
+	if err != nil {
+		panic(errorss.ErrorResponseModel{HttpStatus: 400, Cause: "Url bad formated"})
+	}
+	return id
+}
+
+func (ApiHelper) HandleApiError(c *gin.Context) {
 	if err := recover(); err != nil {
 
 		if errResp, ok := err.(errorss.ErrorResponseModel); ok {
@@ -33,6 +45,22 @@ func (ApiHelper) HandleError(c *gin.Context) {
 		} else {
 			fmt.Print(err)
 			c.JSON(500, errorss.ErrorResponseModel{HttpStatus: 500, Cause: "Error, intente mas tarde"})
+		}
+
+	}
+}
+
+func (ApiHelper) HandleSSRError(c *gin.Context) {
+	if err := recover(); err != nil {
+
+		if errResp, ok := err.(errorss.ErrorResponseModel); ok {
+			if errResp.HttpStatus == 404 {
+				c.HTML(404, "not-found", nil)
+			}
+			c.HTML(404, "user-error", nil)
+		} else {
+			fmt.Print(err)
+			c.HTML(500, "fatal-error", nil)
 		}
 
 	}
