@@ -1,3 +1,4 @@
 *.exe
 *.db
 public/
+pkg_lin/

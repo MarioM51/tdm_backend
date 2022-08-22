@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"gorm.io/driver/postgres"
+	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
@@ -25,8 +25,7 @@ func (dbHelper *DBHelper) Connect() {
 		},
 	)
 
-	dsn := "host=localhost user=postgres password=postgres dbname=carro_de_madera_db port=5432 sslmode=disable TimeZone=America/Mexico_City"
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+	db, err := gorm.Open(sqlite.Open(DB_FILE_NAME), &gorm.Config{
 		Logger: newLogger,
 	})
 

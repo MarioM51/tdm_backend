@@ -13,7 +13,18 @@ require (
 )
 
 require (
+	github.com/glebarez/go-sqlite v1.17.3 // indirect
+	github.com/google/uuid v1.3.0 // indirect
+	github.com/remyoudompheng/bigfft v0.0.0-20200410134404-eec4a21b6bb0 // indirect
+	modernc.org/libc v1.16.8 // indirect
+	modernc.org/mathutil v1.4.1 // indirect
+	modernc.org/memory v1.1.1 // indirect
+	modernc.org/sqlite v1.17.3 // indirect
+)
+
+require (
 	github.com/gin-contrib/sse v0.1.0 // indirect
+	github.com/glebarez/sqlite v1.4.6
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/go-playground/validator/v10 v10.11.0 // indirect

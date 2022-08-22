@@ -159,7 +159,7 @@ func (blogJsonLD *BlogJSONLD) Init(b BlogModel, isInList bool) {
 	blogJsonLD.Type = "article"
 	blogJsonLD.Identifier = strconv.Itoa(b.Id)
 	blogJsonLD.Headline = b.Title
-	blogJsonLD.Image = fmt.Sprintf(helpers.URL_BLOG_IMG, strconv.Itoa(b.Id))
+	blogJsonLD.Image = fmt.Sprintf(helpers.URL_BLOG_IMG, strconv.Itoa(b.Id), b.UpdatedAt.Format(time.RFC3339))
 	blogJsonLD.Abstract = b.Abstract
 	blogJsonLD.ArticleBody = b.Body
 	blogJsonLD.Likes = b.Likes
