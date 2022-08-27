@@ -1,8 +1,16 @@
 package orders
 
 import (
+	"users_api/src/helpers"
+
 	"github.com/gin-gonic/gin"
 )
+
+var dbHelper *helpers.DBHelper = nil
+
+func LinkDependencies(db *helpers.DBHelper) {
+	dbHelper = db
+}
 
 func AddApiRoutes(r *gin.Engine, prefix string) {
 

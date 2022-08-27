@@ -26,7 +26,7 @@ func (UserModel) TableName() string {
 func (u UserModel) CanConfirmOrder() bool {
 	var can = false
 
-	if u.FullName != "" && u.Phone != "" && u.Zip != "" && u.State != "" && u.City != "" && u.Street != "" && u.StreetNum != "" {
+	if u.FullName != "" && u.Phone != "" {
 		can = true
 	}
 

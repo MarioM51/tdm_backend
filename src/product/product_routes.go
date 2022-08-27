@@ -8,6 +8,11 @@ import (
 
 var productApi IProductApiHadler = ProductApiHadler{}
 var productSsrhandler IProductSsrHadler = ProductSsrHadler{}
+var dbHelper *helpers.DBHelper = nil
+
+func LinkDependencies(db *helpers.DBHelper) {
+	dbHelper = db
+}
 
 func AddApiRoutes(r *gin.Engine, prefix string) {
 	r.GET(prefix+"/products", productApi.findAll)

@@ -3,7 +3,6 @@ package helpers
 import (
 	"fmt"
 	"log"
-	"os"
 	"time"
 
 	"gorm.io/driver/postgres"
@@ -15,9 +14,45 @@ type DBHelper struct {
 	DB *gorm.DB
 }
 
-func (dbHelper *DBHelper) Connect() {
+type _DBCredentials struct {
+	host     string
+	user     string
+	pass     string
+	dbname   string
+	port     string
+	timezone string
+}
+
+func (*DBHelper) getCredentials(env string) _DBCredentials {
+	var dbCredentials _DBCredentials
+	if env == "local" {
+		dbCredentials = _DBCredentials{
+			host:     "localhost",
+			user:     "postgres",
+			pass:     "postgres",
+			dbname:   "carro_de_madera_db",
+			port:     "5432",
+			timezone: "America/Mexico_City",
+		}
+	} else if env == "prod" {
+		dbCredentials = _DBCredentials{
+			host:     "carrodemaderadb.postgres.database.azure.com",
+			user:     "carrodemaderauserdb",
+			pass:     "plumonrojO(88)",
+			dbname:   "carro_de_madera_db",
+			port:     "5432",
+			timezone: "America/Mexico_City",
+		}
+	} else {
+		panic(fmt.Sprintf("env '%v' not defined", env))
+	}
+
+	return dbCredentials
+}
+
+func (dbHelper *DBHelper) Connect(env string, loggerPrinter *log.Logger) {
 	newLogger := logger.New(
-		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
+		loggerPrinter, // io writer
 		logger.Config{
 			SlowThreshold:             time.Second, // Slow SQL threshold
 			LogLevel:                  logger.Info, // Log level
@@ -26,15 +61,17 @@ func (dbHelper *DBHelper) Connect() {
 		},
 	)
 
-	const host = "carrodemaderadb.postgres.database.azure.com"
-	const user = "carrodemaderauserdb"
-	const pass = "plumonrojO(88)"
-	const dbname = "carro_de_madera_db"
-	const port = "5432"
-	const timezone = "America/Mexico_City"
+	credentials := dbHelper.getCredentials(env)
 
-	dsn := fmt.Sprintf("host=%v user=%v password=%v dbname=%v port=%v sslmode=disable TimeZone=%v sslmode=require",
-		host, user, pass, dbname, port, timezone,
+	var addOns = ""
+	if env == "prod" {
+		addOns = "sslmode=require"
+	} else if env == "local" {
+		addOns = "sslmode=disable"
+	}
+
+	dsn := fmt.Sprintf("host=%v user=%v password=%v dbname=%v port=%v TimeZone=%v "+addOns,
+		credentials.host, credentials.user, credentials.pass, credentials.dbname, credentials.port, credentials.timezone,
 	)
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{

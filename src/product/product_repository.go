@@ -2,26 +2,13 @@ package product
 
 import (
 	"users_api/src/errorss"
-	"users_api/src/helpers"
 
 	"gorm.io/gorm/clause"
 )
 
 type ProductRepository struct{}
 
-var dbHelper = helpers.DBHelper{}
-
 const _IMAGE_ASO = "Image"
-
-func CreateProductSchema() {
-	dbHelper.Connect()
-
-	/*
-		dbHelper.DB.AutoMigrate(&ProductImage{})
-		dbHelper.DB.AutoMigrate(&ProductModel{})
-		dbHelper.DB.AutoMigrate(&LikeProduct{})
-	*/
-}
 
 func (pr ProductRepository) findAll() *[]ProductModel {
 	allProducts := []ProductModel{}

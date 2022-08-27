@@ -3,7 +3,6 @@ package blog
 import (
 	"strings"
 	"users_api/src/errorss"
-	"users_api/src/helpers"
 )
 
 type IBlogRepository interface {
@@ -23,17 +22,6 @@ type IBlogRepository interface {
 }
 
 type BlogRepository struct {
-}
-
-var dbHelper = helpers.DBHelper{}
-
-func CreateBlogSchema() {
-	dbHelper.Connect()
-
-	/*
-		dbHelper.DB.AutoMigrate(&BlogModel{})
-		dbHelper.DB.AutoMigrate(&LikeBlog{})
-	*/
 }
 
 func (br BlogRepository) findAll() *[]BlogModel {

@@ -38,9 +38,9 @@ func (UserService) findAll() *[]UserModel {
 
 func (UserService) save(newUser UserModel) *UserModel {
 
-	plain, hash := crypto.GenerateRandomHash()
-	Logger.LogF(true, "Activation code:", plain)
-	newUser.ActivationHash = hash
+	//plain, hash := crypto.GenerateRandomHash()
+	//Logger.LogF(true, "Activation code:", plain)
+	//newUser.ActivationHash = hash
 
 	passHash := crypto.GetHash(newUser.Password)
 	newUser.Password = passHash
@@ -82,8 +82,6 @@ func (uServ UserService) activate(id uint, code string) *errorss.ErrorResponseMo
 		return &errorss.ErrorResponseModel{HttpStatus: 400, Cause: "User already activated"}
 	}
 
-	Logger.LogF(true, "To compare: in db: %v, income: %v\n", userFinded.ActivationHash, code)
-
 	isMatch := crypto.PasswordMatches(userFinded.ActivationHash, code)
 	if isMatch {
 		userRepo.updateUser(userFinded, &UserModel{ActivationHash: "_"})
@@ -100,9 +98,9 @@ func (uServ UserService) login(toLoggin *UserModel) (token string, user *UserMod
 		panic(badCredentials)
 	}
 
-	if !uServ.isUserActiivated(userFinded) {
-		panic(errorss.ErrorResponseModel{HttpStatus: 400, Cause: "Email validation requied"})
-	}
+	// if !uServ.isUserActiivated(userFinded) {
+	//	 panic(errorss.ErrorResponseModel{HttpStatus: 400, Cause: "Email validation requied"})
+	// }
 
 	isMatch := crypto.PasswordMatches(userFinded.Password, toLoggin.Password)
 	if !isMatch {

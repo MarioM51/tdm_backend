@@ -1,6 +1,9 @@
 package main
 
 import (
+	"flag"
+	"fmt"
+	"log"
 	"os"
 	"strings"
 	"time"
@@ -17,11 +20,31 @@ import (
 )
 
 func main() {
-	//Setup database
-	users.CreateUserSchema()
-	product.CreateProductSchema()
-	blog.CreateBlogSchema()
-	orders.CreateOrderSchema()
+	//Create module dependencies
+	dbHelper := &helpers.DBHelper{}
+	loggerPrinter := log.New(os.Stdout, "\r\n", log.LstdFlags)
+
+	//setups module dependencies
+	var env string = ""
+	flag.StringVar(&env, "env", "local", "Eviroment {local|prod}")
+	flag.Parse()
+	loggerPrinter.Println("Env: " + env)
+
+	dbHelper.Connect(env, loggerPrinter)
+
+	//Pass dependencies to modules
+	users.LinkDependencies(dbHelper)
+	product.LinkDependencies(dbHelper)
+	blog.LinkDependencies(dbHelper)
+	orders.LinkDependencies(dbHelper)
+
+	if env == "local" {
+		gin.SetMode(gin.DebugMode)
+	} else if env == "prod" {
+		gin.SetMode(gin.ReleaseMode)
+	} else {
+		panic(fmt.Sprintf("env '%v' not defined", env))
+	}
 
 	router := gin.Default()
 	gin.DisableConsoleColor()

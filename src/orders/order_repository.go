@@ -2,18 +2,10 @@ package orders
 
 import (
 	"users_api/src/errorss"
-	"users_api/src/helpers"
 	"users_api/src/product"
 )
 
 type OrderRepository struct {
-}
-
-var dbHelper = helpers.DBHelper{}
-
-func CreateOrderSchema() {
-	dbHelper.Connect()
-
 }
 
 func (dbh OrderRepository) save(newOder *Order) *Order {

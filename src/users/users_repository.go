@@ -2,7 +2,6 @@ package users
 
 import (
 	"users_api/src/errorss"
-	"users_api/src/helpers"
 
 	"gorm.io/gorm/clause"
 )
@@ -17,12 +16,6 @@ type IUserRepository interface {
 }
 
 type UserRepository struct {
-}
-
-var dbHelper = helpers.DBHelper{}
-
-func CreateUserSchema() {
-	dbHelper.Connect()
 }
 
 func (ur UserRepository) saveUser(newUser *UserModel) *UserModel {

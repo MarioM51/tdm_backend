@@ -1,13 +1,18 @@
 package users
 
 import (
-	"users_api/src/logs"
+	"users_api/src/helpers"
 
 	"github.com/gin-gonic/gin"
 )
 
 var userHandler IUserHadler = UserHadler{}
-var Logger = logs.New(false)
+
+var dbHelper *helpers.DBHelper = nil
+
+func LinkDependencies(db *helpers.DBHelper) {
+	dbHelper = db
+}
 
 func AddApiRoutes(r *gin.Engine, prefix string) {
 	r.GET(prefix+"/users", userHandler.getAll)
