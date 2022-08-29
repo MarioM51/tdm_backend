@@ -116,7 +116,7 @@ curl http://192.168.1.81:80/api/products \
   --data '{ "name":"Producto 1", "price":1001, "description":"Some product description 1" }'
 ```
 
-2, update a product
+3, update a product
 
 - In the payload the id product is required
 
@@ -135,6 +135,17 @@ curl http://192.168.1.81:80/api/products/3 \
   --request "DELETE" \
   --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDUyNDM0NjEsImp0aSI6IjgyIn0.zTMVlrAwRMpaKtXqUu1-foFwqXaWdvYNlU8C05VLCHY" \
   --include
+```
+
+5, Add product to homescreen, or delete product from homescreen
+
+- The request to add or remove the product from homescreen it's the same, the backend detect
+  automatically if it has to romove or add.
+
+```r
+curl http://192.168.1.81:80/api/products/1/onHomeScreen --request "PUT" \
+  --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NjE2NjE5ODUsImp0aSI6Ijc5In0.-g8Dk7ynvbBPugoZSRZ1hww4VuxIf5EFxni6Jph1mq8" 
+
 ```
 
 #### Product likes

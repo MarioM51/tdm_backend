@@ -1,6 +1,7 @@
 package product
 
 import (
+	"time"
 	"users_api/src/errorss"
 
 	"gorm.io/gorm/clause"
@@ -12,7 +13,8 @@ const _IMAGE_ASO = "Image"
 
 func (pr ProductRepository) findAll() *[]ProductModel {
 	allProducts := []ProductModel{}
-	dbHelper.DB.Find(&allProducts)
+	dbHelper.DB.Order("id").Find(&allProducts)
+	pr.cleanRepitedOnHomeScreen(&allProducts)
 
 	//add image struct only with the id
 	for i := range allProducts {
@@ -30,6 +32,18 @@ func (pr ProductRepository) findAll() *[]ProductModel {
 	return &allProducts
 }
 
+func (pr ProductRepository) cleanRepitedOnHomeScreen(allProducts *[]ProductModel) {
+	for i := range *allProducts {
+		for j := range *allProducts {
+			diferentProduct := (*allProducts)[i].ID != (*allProducts)[j].ID
+			sameDate := (*allProducts)[i].OnHomeScreen.Equal((*allProducts)[j].OnHomeScreen)
+			if diferentProduct && sameDate {
+				(*allProducts)[j].OnHomeScreen = time.Time{}
+			}
+		}
+	}
+}
+
 func (ProductRepository) findProductImages(p *ProductModel) {
 	//dbHelper.DB.Create(toSave)
 	allImages := []ProductImage{}
@@ -40,7 +54,11 @@ func (ProductRepository) findProductImages(p *ProductModel) {
 func (ProductRepository) save(toSave *ProductModel) *ProductModel {
 	//dbHelper.DB.Create(toSave)
 	toSave.Images = []ProductImage{}
-	dbHelper.DB.Omit(clause.Associations).Create(toSave)
+	omits := []string{}
+	if toSave.OnHomeScreen.Year() <= 1 {
+		omits = append(omits, "on_home_screen")
+	}
+	dbHelper.DB.Omit(clause.Associations).Omit(omits...).Create(toSave)
 	return toSave
 }
 
@@ -67,7 +85,11 @@ func (ProductRepository) delete(toDelete *ProductModel) *ProductModel {
 }
 
 func (ProductRepository) update(oldInfo, newInfo *ProductModel) *ProductModel {
-	dbHelper.DB.Model(&oldInfo).Updates(&newInfo)
+	dbHelper.DB.Model(&oldInfo).Omit(clause.Associations).Updates(&newInfo)
+	if newInfo.OnHomeScreen.Year() == 1 {
+		dbHelper.DB.Model(&oldInfo).Omit(clause.Associations).Update("on_home_screen", nil)
+	}
+	newInfo.ID = oldInfo.ID
 	return newInfo
 }
 

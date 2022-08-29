@@ -1,6 +1,8 @@
 package product
 
-import "users_api/src/errorss"
+import (
+	"users_api/src/errorss"
+)
 
 type ProductService struct{}
 
@@ -61,7 +63,12 @@ func (ps ProductService) update(newInfo *ProductModel) (updated *ProductModel) {
 
 	oldInfo := ps.findById(newInfo.ID)
 
+	// avoid updates not wanted
+	newInfo.ID = 0
+	newInfo.Images = nil
+	newInfo.Likes = 0
 	updated = productDao.update(oldInfo, newInfo)
+
 	return updated
 }
 

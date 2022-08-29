@@ -150,6 +150,7 @@ type BlogJSONLD struct {
 	CommentCount   int             `json:"commentCount"`
 	CommentsRating float32         `json:"comments_rating"`
 	Likes          int             `json:"likes"`
+	OnHomeScreen   time.Time       `json:"onHomeScreen,omitempty"`
 }
 
 func (blogJsonLD *BlogJSONLD) Init(b BlogModel, isInList bool) {

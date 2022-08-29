@@ -5,13 +5,14 @@ import (
 )
 
 type ProductModel struct {
-	ID          int            `json:"id" gorm:"primaryKey"`
-	Name        string         `json:"name" gorm:"size:60"`
-	Price       int            `json:"price"`
-	Description string         `json:"description" gorm:"size:160"`
-	Likes       int            `json:"likes" gorm:"-:all"`
-	Images      []ProductImage `json:"images,omitempty" gorm:"foreignKey:ID"`
-	Comments    []Comment      `json:"comments,omitempty" gorm:"-:all"`
+	ID           int            `json:"id" gorm:"primaryKey"`
+	Name         string         `json:"name" gorm:"size:60"`
+	Price        int            `json:"price"`
+	Description  string         `json:"description" gorm:"size:160"`
+	Likes        int            `json:"likes" gorm:"-:all"`
+	Images       []ProductImage `json:"images,omitempty" gorm:"foreignKey:ID"`
+	Comments     []Comment      `json:"comments,omitempty" gorm:"-:all"`
+	OnHomeScreen time.Time      `json:"onHomeScreen,omitempty"`
 	/*
 		category
 			material

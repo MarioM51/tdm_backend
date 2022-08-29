@@ -1,6 +1,8 @@
 package helpers
 
-const DOMAIN = "0.0.0.0"
+const DOMAIN = "192.168.1.81"
+
+//const DOMAIN = "0.0.0.0"
 
 const PORT = "80"
 
