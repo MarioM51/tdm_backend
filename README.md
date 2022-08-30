@@ -236,17 +236,37 @@ curl http://192.168.1.81:80/api/blogs/2 --request "GET" | json_pp
 
 ```r
 curl http://192.168.1.81:80/api/blogs --request "POST" \
-  --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTExMTY4MTYsImp0aSI6Ijc5In0.7mai9dtJhPEpEMyYBDcEDf_IJ2w0PcPj-JPbEhEPdZs" \
-  --data '{ "id": 0, "title": "Algo 2", "body": "<XX>...</XX><p>...", "abstract": "Some abstract ...", "thumbnail": "data:image/png;base64,xx...==", "author": null, "createdAt": null, "updateAt": null }' \
+  --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NjE4Mjk3MjEsImp0aSI6Ijc5In0.hKTme8DOE65PAoGYKQvb1qLUboNhQaAj4rMkLQPLLyk" \
+  --data '{ "title": "Algo 2", "body": "<XX>...</XX><p>...", "abstract": "Some abstract ...", "thumbnail": "data:image/png;base64,xx...==", "author": null, "createdAt": null, "updateAt": null }' \
+  | json_pp
+```
+
+- Create a blog with onHomeScreen
+
+```r
+curl http://192.168.1.81:80/api/blogs --request "POST" \
+  --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NjE4Mjk3MjEsImp0aSI6Ijc5In0.hKTme8DOE65PAoGYKQvb1qLUboNhQaAj4rMkLQPLLyk" \
+  --data '{ "onHomeScreen": "2022-01-01T01:11:01Z", "title": "Algo 3", "body": "<XX>...</XX><p>...", "abstract": "Some abstract ...", "thumbnail": "data:image/png;base64,xx...==", "author": null, "createdAt": null, "updateAt": null }' \
   | json_pp
 ```
 
 5, update blog
 
+- The id is required in the json body
+
 ```r
 curl http://192.168.1.81:80/api/blogs --request "PUT" \
-  --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTExMTY4MTYsImp0aSI6Ijc5In0.7mai9dtJhPEpEMyYBDcEDf_IJ2w0PcPj-JPbEhEPdZs" \
-  --data '{ "id": 1, "title": "Algo 11", "body": "<XX>11</XX><p>...", "abstract": "Some abstract 11", "thumbnail": "data:image/png;base64,xx...11", "author": null, "createdAt": null, "updateAt": null }' \
+  --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NjE4Mjk3MjEsImp0aSI6Ijc5In0.hKTme8DOE65PAoGYKQvb1qLUboNhQaAj4rMkLQPLLyk" \
+  --data '{ "id": 5, "title": "Algo 333", "body": "<XX>333</XX><p>...", "abstract": "Some abstract 333", "thumbnail": "data:image/png;base64,xx...333" }' \
+  | json_pp
+```
+
+- Update just a field, it's required the ID and the field to update
+
+```r
+curl http://192.168.1.81:80/api/blogs --request "PUT" \
+  --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NjE4Mjk3MjEsImp0aSI6Ijc5In0.hKTme8DOE65PAoGYKQvb1qLUboNhQaAj4rMkLQPLLyk" \
+  --data '{ "id": 5, "onHomeScreen": "2022-01-01T01:13:33Z" }' \
   | json_pp
 ```
 

@@ -55,11 +55,6 @@ func (bs BlogService) update(newInfoBlog *BlogModel) *BlogModel {
 
 	oldInfo := bs.findById(newInfoBlog.Id)
 
-	errMsg := newInfoBlog.validate()
-	if errMsg != "" {
-		panic(errorss.ErrorResponseModel{HttpStatus: 400, Cause: errMsg})
-	}
-
 	blogUpdated := blogRepo.update(oldInfo, newInfoBlog)
 	return blogUpdated
 }

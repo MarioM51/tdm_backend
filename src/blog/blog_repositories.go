@@ -57,7 +57,12 @@ func (br BlogRepository) findAll() *[]BlogModel {
 }
 
 func (BlogRepository) save(newBlog *BlogModel) *BlogModel {
-	tx := dbHelper.DB.Create(newBlog)
+	omits := []string{}
+	if newBlog.OnHomeScreen.Year() <= 1 {
+		omits = append(omits, "on_home_screen")
+	}
+
+	tx := dbHelper.DB.Omit(omits...).Create(newBlog)
 	if tx.Error != nil {
 		handleTxError(tx.Error)
 	}
@@ -67,9 +72,12 @@ func (BlogRepository) save(newBlog *BlogModel) *BlogModel {
 
 func (BlogRepository) update(oldInfo, newInfo *BlogModel) *BlogModel {
 	tx := dbHelper.DB.Model(&oldInfo).Updates(&newInfo)
-
 	if tx.Error != nil {
 		handleTxError(tx.Error)
+	}
+
+	if newInfo.OnHomeScreen.Year() == 1 {
+		dbHelper.DB.Model(&oldInfo).Update("on_home_screen", nil)
 	}
 
 	return oldInfo

@@ -22,6 +22,7 @@ type BlogModel struct {
 	CommentsRating float32       `json:"comments_rating" gorm:"-:all"`
 	CreatedAt      time.Time     `json:"created_at"`
 	UpdatedAt      time.Time     `json:"updated_at"`
+	OnHomeScreen   time.Time     `json:"onHomeScreen,omitempty"`
 }
 
 func (BlogModel) TableName() string {
