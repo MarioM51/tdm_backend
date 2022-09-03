@@ -6,6 +6,7 @@ import (
 
 type IBlogService interface {
 	findAll() *[]BlogModel
+	FindOnHomeScreen() *[]BlogModel
 	findById(id int) *BlogModel
 	save(newBlog *BlogModel) *BlogModel
 	update(newBlog *BlogModel) *BlogModel
@@ -26,8 +27,13 @@ var blogRepo IBlogRepository = BlogRepository{}
 const _ANON_USER_ID = 1
 
 func (BlogService) findAll() *[]BlogModel {
-	all := blogRepo.findAll()
+	all := blogRepo.findAll("")
 	return all
+}
+
+func (BlogService) FindOnHomeScreen() *[]BlogModel {
+	onHomeScreen := blogRepo.findAll("on_home_screen IS NOT NULL")
+	return onHomeScreen
 }
 
 func (BlogService) findById(id int) *BlogModel {

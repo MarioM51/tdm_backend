@@ -1,16 +1,21 @@
 {{define "title"}}
-    Products
-{{end}}
+Tienda de Mario
+{{ end }}
 
 {{define "content"}}
-    <wc-layout>
-      <div id="content-page">
-        <h1 class="text-2xl font-bold underline">Home</h1>
-        <p>From ssr {{.HI}}</p>
-      </div>
-    </wc-layout>
-{{end}}
+<script id="blogs_jsonld" type="application/ld+json">
+  {{.BLOGS_JSONLD}}
+</script>
+<script id="products_jsonld" type="application/ld+json">
+  {{.PRODUCTS_JSONLD}}
+</script>
+
+<wc-layout>
+  <wc-home id="content-page"></wc-home>
+</wc-layout>
+{{ end }}
 
 {{define "js"}}
-<script defer src='/static/web_components/wc-layout.js'></script>
-{{end}}
+<script defer src="/static/web_components/wc-layout.js"></script>
+<script defer src="/static/web_components/wc-home.js"></script>
+{{ end }}

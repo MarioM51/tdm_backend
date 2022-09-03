@@ -6,7 +6,7 @@ import (
 )
 
 type IBlogRepository interface {
-	findAll() *[]BlogModel
+	findAll(filter string) *[]BlogModel
 	save(newBlog *BlogModel) *BlogModel
 	update(oldInfo, newInfo *BlogModel) *BlogModel
 	findById(id int) *BlogModel
@@ -24,9 +24,12 @@ type IBlogRepository interface {
 type BlogRepository struct {
 }
 
-func (br BlogRepository) findAll() *[]BlogModel {
+func (br BlogRepository) findAll(filter string) *[]BlogModel {
 	all := []BlogModel{}
-	dbHelper.DB.Select("id", "title", "author", "abstract", "created_at", "updated_at").Find(&all)
+	dbHelper.DB.
+		Select("id", "title", "author", "abstract", "created_at", "updated_at").
+		Where(filter).
+		Find(&all)
 	for i := range all {
 		likes := br.findAllLikesOfBlog(all[i].Id)
 		likesCount := len(likes)

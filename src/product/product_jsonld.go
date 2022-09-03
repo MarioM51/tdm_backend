@@ -33,15 +33,18 @@ func ProductModelToArrayJSONLD(products []ProductModel) ProductsWrapperJSONLD {
 			imagesURLs = append(imagesURLs, urlTemp)
 		}
 
+		aggrRating := getAggregateRating(&p)
+
 		productListA = append(productListA, ProductJSONLD{
-			Type:        "Product",
-			Identifier:  strconv.Itoa(p.ID),
-			Url:         "/nothing",
-			Images:      imagesURLs,
-			Name:        p.Name,
-			Likes:       p.Likes,
-			Description: p.Description,
-			Offer:       Offer{Type: "Offer", Price: strconv.Itoa(p.Price), PriceCurrency: "MXN"},
+			Type:            "Product",
+			Identifier:      strconv.Itoa(p.ID),
+			Url:             "/nothing",
+			Images:          imagesURLs,
+			Name:            p.Name,
+			Likes:           p.Likes,
+			Description:     p.Description,
+			Offer:           Offer{Type: "Offer", Price: strconv.Itoa(p.Price), PriceCurrency: "MXN"},
+			AggregateRating: aggrRating,
 		})
 	}
 
@@ -98,22 +101,13 @@ func ProductModelToJSONLD(p *ProductModel, fromList bool) ProductJSONLD {
 }
 
 func getAggregateRating(p *ProductModel) AggregateRating {
-	var total int = 0
-	for j := range p.Comments {
-		total = total + p.Comments[j].Stars
-	}
-
-	var ratingValue float32 = 1
-	if total != 0 && len(p.Comments) != 0 {
-		ratingValue = float32(total) / float32(len(p.Comments))
-	}
 
 	var aggrRating = AggregateRating{
 		Type:        "AggregateRating",
 		BestRating:  5,
 		WorstRating: 1,
-		RatingValue: ratingValue,
-		RatingCount: uint16(len(p.Comments)),
+		RatingValue: p.CommentsRating,
+		RatingCount: uint16(p.CommentCount),
 	}
 
 	return aggrRating

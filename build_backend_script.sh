@@ -53,8 +53,9 @@ if [ $env == "test" ]; then
 
 fi
 
-if [ $env == "dev" ]; then
+if [ $env == "local" ]; then
   echo "====== for windows"
+  cd $SCRIPTPATH
   go build -v -o $dist_directory/$exe_filename $SCRIPTPATH
 fi
 

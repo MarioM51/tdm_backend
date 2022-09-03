@@ -11,25 +11,47 @@ type ProductRepository struct{}
 
 const _IMAGE_ASO = "Image"
 
-func (pr ProductRepository) findAll() *[]ProductModel {
+func (pr ProductRepository) findAll(filter string) *[]ProductModel {
 	allProducts := []ProductModel{}
-	dbHelper.DB.Order("id").Find(&allProducts)
+	dbHelper.DB.Order("id").Where(filter).Find(&allProducts)
 	pr.cleanRepitedOnHomeScreen(&allProducts)
 
-	//add image struct only with the id
 	for i := range allProducts {
+		//add image struct only with the id
 		pr.findProductImages(&allProducts[i])
-	}
 
-	//add num of likes
-
-	for i := range allProducts {
+		//add num of likes
 		likes := pr.findAllLikesOfProduct(allProducts[i].ID)
 		countLikes := len(likes)
 		allProducts[i].Likes = countLikes
+
+		//add count and raiting comments
+		comments := pr.findAllCommentsOfProduct(allProducts[i].ID)
+		rating, count := pr.getCommentRatingAndCount(allProducts[i], comments)
+		allProducts[i].CommentsRating = rating
+		allProducts[i].CommentCount = count
+
 	}
 
 	return &allProducts
+}
+
+func (pr ProductRepository) getCommentRatingAndCount(product ProductModel, comments []Comment) (rating float32, count int) {
+	count = len(comments)
+
+	//get average rating
+	var total int = 0
+	for j := range comments {
+		total = total + comments[j].Stars
+	}
+
+	if total == 0 && count == 0 {
+		rating = 0
+	} else {
+		rating = float32(total) / float32(count)
+	}
+
+	return rating, count
 }
 
 func (pr ProductRepository) cleanRepitedOnHomeScreen(allProducts *[]ProductModel) {
@@ -75,6 +97,10 @@ func (pr ProductRepository) findById(id int) (finded *ProductModel) {
 	finded.Likes = countLikes
 
 	finded.Comments = pr.findAllCommentsOfProduct(finded.ID)
+
+	rating, count := pr.getCommentRatingAndCount(*finded, finded.Comments)
+	finded.CommentsRating = rating
+	finded.CommentCount = count
 
 	return finded
 }

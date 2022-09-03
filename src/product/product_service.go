@@ -11,7 +11,12 @@ var productDao = ProductRepository{}
 const _ANON_USER_ID = 1
 
 func (ProductService) findAll() (all *[]ProductModel) {
-	all = productDao.findAll()
+	all = productDao.findAll("")
+	return all
+}
+
+func (ProductService) FindOnHomeScreen() (all *[]ProductModel) {
+	all = productDao.findAll("on_home_screen IS NOT NULL")
 	return all
 }
 
