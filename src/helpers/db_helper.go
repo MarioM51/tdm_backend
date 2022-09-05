@@ -14,43 +14,7 @@ type DBHelper struct {
 	DB *gorm.DB
 }
 
-type _DBCredentials struct {
-	host     string
-	user     string
-	pass     string
-	dbname   string
-	port     string
-	timezone string
-}
-
-func (*DBHelper) getCredentials(env string) _DBCredentials {
-	var dbCredentials _DBCredentials
-	if env == "local" {
-		dbCredentials = _DBCredentials{
-			host:     "localhost",
-			user:     "postgres",
-			pass:     "postgres",
-			dbname:   "carro_de_madera_db",
-			port:     "5432",
-			timezone: "America/Mexico_City",
-		}
-	} else if env == "prod" {
-		dbCredentials = _DBCredentials{
-			host:     "carrodemaderadb.postgres.database.azure.com",
-			user:     "carrodemaderauserdb",
-			pass:     "plumonrojO(88)",
-			dbname:   "carro_de_madera_db",
-			port:     "5432",
-			timezone: "America/Mexico_City",
-		}
-	} else {
-		panic(fmt.Sprintf("env '%v' not defined", env))
-	}
-
-	return dbCredentials
-}
-
-func (dbHelper *DBHelper) Connect(env string, loggerPrinter *log.Logger) {
+func (dbHelper *DBHelper) Connect(constants Constants, loggerPrinter *log.Logger) {
 	newLogger := logger.New(
 		loggerPrinter, // io writer
 		logger.Config{
@@ -61,17 +25,22 @@ func (dbHelper *DBHelper) Connect(env string, loggerPrinter *log.Logger) {
 		},
 	)
 
-	credentials := dbHelper.getCredentials(env)
-
 	var addOns = ""
-	if env == "prod" {
+	if constants.IsProduction() {
 		addOns = "sslmode=require"
-	} else if env == "local" {
+	} else if constants.IsLocal() {
 		addOns = "sslmode=disable"
+	} else {
+		log.Panicf("Enviroment '%v' not defined, available: %v", constants.Env, constants.AvalaibleEnviroments())
 	}
 
 	dsn := fmt.Sprintf("host=%v user=%v password=%v dbname=%v port=%v TimeZone=%v "+addOns,
-		credentials.host, credentials.user, credentials.pass, credentials.dbname, credentials.port, credentials.timezone,
+		constants.DatabaseCredentials.host,
+		constants.DatabaseCredentials.user,
+		constants.DatabaseCredentials.pass,
+		constants.DatabaseCredentials.dbname,
+		constants.DatabaseCredentials.port,
+		constants.DatabaseCredentials.timezone,
 	)
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{

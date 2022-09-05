@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strconv"
 	"time"
-	"users_api/src/helpers"
 )
 
 type ProductJSONLD struct {
@@ -29,7 +28,7 @@ func ProductModelToArrayJSONLD(products []ProductModel) ProductsWrapperJSONLD {
 		imagesURLs := []string{}
 		for i := range p.Images {
 			p.Images[i].Base64 = ""
-			urlTemp := fmt.Sprintf(helpers.URL_PRODUCT_IMG, p.Images[i].ID, p.Images[i].UpdatedAt.Format(time.RFC3339))
+			urlTemp := fmt.Sprintf(constants.UrlProductImage, p.Images[i].ID, p.Images[i].UpdatedAt.Format(time.RFC3339))
 			imagesURLs = append(imagesURLs, urlTemp)
 		}
 
@@ -62,7 +61,7 @@ func ProductModelToArrayJSONLD(products []ProductModel) ProductsWrapperJSONLD {
 func ProductModelToJSONLD(p *ProductModel, fromList bool) ProductJSONLD {
 	var imgUrls []string
 	for i := range p.Images {
-		imgUrls = append(imgUrls, fmt.Sprintf(helpers.URL_PRODUCT_IMG, p.Images[i].ID, p.Images[i].UpdatedAt.Format(time.RFC3339)))
+		imgUrls = append(imgUrls, fmt.Sprintf(constants.UrlBlogImage, p.Images[i].ID, p.Images[i].UpdatedAt.Format(time.RFC3339)))
 	}
 
 	aggrRating := getAggregateRating(p)

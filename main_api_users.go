@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -20,30 +19,28 @@ import (
 )
 
 func main() {
+	//Get enviroment
+	constants := helpers.Constants{}
+	constants.LoadConstants()
+
 	//Create module dependencies
 	dbHelper := &helpers.DBHelper{}
 	loggerPrinter := log.New(os.Stdout, "\r\n", log.LstdFlags)
 
-	//setups module dependencies
-	var env string = ""
-	flag.StringVar(&env, "env", "local", "Eviroment {local|prod}")
-	flag.Parse()
-	loggerPrinter.Println("Env: " + env)
-
-	dbHelper.Connect(env, loggerPrinter)
+	dbHelper.Connect(constants, loggerPrinter)
 
 	//Pass dependencies to modules
 	users.LinkDependencies(dbHelper)
-	product.LinkDependencies(dbHelper)
-	blog.LinkDependencies(dbHelper)
+	product.LinkDependencies(dbHelper, constants)
+	blog.LinkDependencies(dbHelper, constants)
 	orders.LinkDependencies(dbHelper)
 
-	if env == "local" {
+	if constants.IsLocal() {
 		gin.SetMode(gin.DebugMode)
-	} else if env == "prod" {
+	} else if constants.IsProduction() {
 		gin.SetMode(gin.ReleaseMode)
 	} else {
-		panic(fmt.Sprintf("env '%v' not defined", env))
+		panic(fmt.Sprintf("env '%v' not defined, required: [%v]", constants.Env, constants.AvalaibleEnviroments()))
 	}
 
 	router := gin.Default()
@@ -75,10 +72,10 @@ func main() {
 	}))
 
 	//Setup Api
-	users.AddApiRoutes(router, helpers.API_PREFIX)
-	product.AddApiRoutes(router, helpers.API_PREFIX)
-	blog.AddApiRoutes(router, helpers.API_PREFIX)
-	orders.AddApiRoutes(router, helpers.API_PREFIX)
+	users.AddApiRoutes(router, constants.ApiPrefix)
+	product.AddApiRoutes(router, constants.ApiPrefix)
+	blog.AddApiRoutes(router, constants.ApiPrefix)
+	orders.AddApiRoutes(router, constants.ApiPrefix)
 
 	//Setup server side rendering
 	templates := []helpers.TemplateModel{}
@@ -103,5 +100,5 @@ func main() {
 	home.AddSsrRoutes(router, &templates)
 	router.HTMLRender = helpers.CreateHTMLRenderHelper(templates)
 
-	router.Run(helpers.DOMAIN + ":" + helpers.PORT)
+	router.Run(constants.Domain + ":" + constants.Port)
 }

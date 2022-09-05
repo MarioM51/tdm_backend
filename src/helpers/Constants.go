@@ -1,17 +1,65 @@
 package helpers
 
-const DOMAIN = "192.168.1.81"
+import (
+	"log"
+	"os"
 
-//const DOMAIN = "0.0.0.0"
+	"github.com/joho/godotenv"
+)
 
-const PORT = "80"
+type Constants struct {
+	Domain              string
+	Port                string
+	ApiPrefix           string
+	Env                 string
+	BackUrl             string
+	UrlBlogImage        string
+	UrlProductImage     string
+	DatabaseCredentials DBCredentials
+}
 
-const API_PREFIX = "/api"
+type DBCredentials struct {
+	host     string
+	user     string
+	pass     string
+	dbname   string
+	port     string
+	timezone string
+}
 
-const BACK_URL = "http://" + DOMAIN + ":" + PORT
+func (c *Constants) LoadConstants() {
 
-const DB_FILE_NAME = "app.db"
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatalf("Some error occured. Err: %s", err)
+	}
 
-const URL_BLOG_IMG = API_PREFIX + "/blogs/%v/image?updatedAt=%v"
+	c.Env = os.Getenv("ENV")
 
-const URL_PRODUCT_IMG = API_PREFIX + "/products/image/%v?updatedAt=%v"
+	c.Domain = os.Getenv("DOMAIN")
+	c.Port = os.Getenv("PORT")
+
+	c.ApiPrefix = "/api"
+	c.BackUrl = "http://" + c.Domain + ":" + c.Port
+	c.UrlBlogImage = c.ApiPrefix + "/blogs/%v/image?updatedAt=%v"
+	c.UrlProductImage = c.ApiPrefix + "/products/image/%v?updatedAt=%v"
+
+	c.DatabaseCredentials.host = os.Getenv("DB_HOST")
+	c.DatabaseCredentials.user = os.Getenv("USER")
+	c.DatabaseCredentials.pass = os.Getenv("PASS")
+	c.DatabaseCredentials.port = os.Getenv("DB_PORT")
+	c.DatabaseCredentials.dbname = os.Getenv("DB_NAME")
+	c.DatabaseCredentials.timezone = os.Getenv("TIMEZONE")
+}
+
+func (c *Constants) IsProduction() bool {
+	return c.Env == "PRODUCTION"
+}
+
+func (c *Constants) IsLocal() bool {
+	return c.Env == "local"
+}
+
+func (*Constants) AvalaibleEnviroments() string {
+	return "local, PRODUCTION"
+}

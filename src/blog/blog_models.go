@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strconv"
 	"time"
-	"users_api/src/helpers"
 
 	"gorm.io/gorm"
 )
@@ -100,7 +99,7 @@ func (b BlogComment) toJsonLD() CommentJSONLD {
 		Identifier:    fmt.Sprint(b.Id),
 		IdUser:        b.IdUser,
 		Text:          b.Text,
-		DatePublished: b.CreatedAt.String(),
+		DatePublished: b.CreatedAt.Format(time.RFC3339),
 		ReviewRating: ReviewRating{
 			Type:        "Rating",
 			BestRating:  5,
@@ -161,7 +160,7 @@ func (blogJsonLD *BlogJSONLD) Init(b BlogModel, isInList bool) {
 	blogJsonLD.Type = "article"
 	blogJsonLD.Identifier = strconv.Itoa(b.Id)
 	blogJsonLD.Headline = b.Title
-	blogJsonLD.Image = fmt.Sprintf(helpers.URL_BLOG_IMG, strconv.Itoa(b.Id), b.UpdatedAt.Format(time.RFC3339))
+	blogJsonLD.Image = fmt.Sprintf(constants.UrlBlogImage, strconv.Itoa(b.Id), b.UpdatedAt.Format(time.RFC3339))
 	blogJsonLD.Abstract = b.Abstract
 	blogJsonLD.ArticleBody = b.Body
 	blogJsonLD.Likes = b.Likes

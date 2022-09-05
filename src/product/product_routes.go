@@ -9,9 +9,11 @@ import (
 var productApi IProductApiHadler = ProductApiHadler{}
 var productSsrhandler IProductSsrHadler = ProductSsrHadler{}
 var dbHelper *helpers.DBHelper = nil
+var constants helpers.Constants
 
-func LinkDependencies(db *helpers.DBHelper) {
+func LinkDependencies(db *helpers.DBHelper, consts helpers.Constants) {
 	dbHelper = db
+	constants = consts
 }
 
 func AddApiRoutes(r *gin.Engine, prefix string) {
