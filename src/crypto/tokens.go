@@ -8,7 +8,7 @@ import (
 	"time"
 	"users_api/src/errorss"
 
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v4"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -77,9 +77,9 @@ func GetHash(plainText string) string {
 
 func GenerateToken(id string) string {
 
-	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
-		Id:        id,
-		ExpiresAt: time.Now().Add(time.Minute * token_expire_minutes).Unix(),
+	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
+		ID:        id,
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * token_expire_minutes)),
 	})
 
 	token, err := claims.SignedString([]byte(token_secret))
