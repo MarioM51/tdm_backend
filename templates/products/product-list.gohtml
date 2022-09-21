@@ -1,15 +1,16 @@
 {{define "title"}}
-    Products
-{{end}}
+Products
+{{ end }}
 
 {{define "content"}}
-    <script id="products_jsonld" type="application/ld+json">{{.PRODUCTS_JSONLD}}</script>
-    <wc-layout>
-        <wc-product-store-page id="content-page"></wc-product-store-page>
-    </wc-layout>
-{{end}}
+<script id="products_jsonld" type="application/ld+json">
+  {{.PRODUCTS_JSONLD}}
+</script>
+<wc-layout>
+  <wc-product-store-page id="content-page"></wc-product-store-page>
+</wc-layout>
+{{ end }}
 
 {{define "js"}}
-<script defer src='/static/web_components/wc-layout.js'></script>
-<script defer src='/static/web_components/wc-product-store-page.js'></script>
-{{end}}
+<script defer src="{{WebComponentsFolder}}/wc-product-store-page.js"></script>
+{{ end }}

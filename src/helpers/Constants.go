@@ -8,14 +8,17 @@ import (
 )
 
 type Constants struct {
-	Domain              string
-	Port                string
-	ApiPrefix           string
-	Env                 string
-	BackUrl             string
-	UrlBlogImage        string
-	UrlProductImage     string
-	DatabaseCredentials DBCredentials
+	Domain                 string
+	Port                   string
+	ApiPrefix              string
+	Env                    string
+	BackUrl                string
+	UrlBlogImage           string
+	UrlProductImage        string
+	DatabaseCredentials    DBCredentials
+	StaticResourcesVersion string
+	StaticFolder           string
+	WebComponentsFolder    string
 }
 
 type DBCredentials struct {
@@ -50,6 +53,10 @@ func (c *Constants) LoadConstants() {
 	c.DatabaseCredentials.port = os.Getenv("DB_PORT")
 	c.DatabaseCredentials.dbname = os.Getenv("DB_NAME")
 	c.DatabaseCredentials.timezone = os.Getenv("TIMEZONE")
+
+	c.StaticResourcesVersion = os.Getenv("STATIC_FILES_VERSION")
+	c.StaticFolder = os.Getenv("STATIC_FOLDER")
+	c.WebComponentsFolder = os.Getenv("WEB_COMPONENTS_FOLDER")
 }
 
 func (c *Constants) IsProduction() bool {

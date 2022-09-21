@@ -1,15 +1,14 @@
-{{define "title"}}{{.BLOG_JSONLD.Headline}}{{end}}
+{{define "title"}}{{.BLOG_JSONLD.Headline}}{{ end }}
 
 {{define "content"}}
-  <script id="blog_jsonld" type="application/ld+json">
-    {{.BLOG_JSONLD}}
-  </script>
-  <wc-layout>
-    <wc-blog-details-page id="content-page"></wc-blog-details-page>
-  </wc-layout>
-{{end}}
+<script id="blog_jsonld" type="application/ld+json">
+  {{.BLOG_JSONLD}}
+</script>
+<wc-layout>
+  <wc-blog-details-page id="content-page"></wc-blog-details-page>
+</wc-layout>
+{{ end }}
 
 {{define "js"}}
-  <script defer src='/static/web_components/wc-layout.js'></script>
-  <script defer src='/static/web_components/wc-blog-details-page.js'></script>
-{{end}}
+  <script defer src="{{WebComponentsFolder}}/wc-blog-details-page.js"></script>
+{{ end }}

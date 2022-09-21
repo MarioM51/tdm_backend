@@ -61,7 +61,9 @@ func ProductModelToArrayJSONLD(products []ProductModel) ProductsWrapperJSONLD {
 func ProductModelToJSONLD(p *ProductModel, fromList bool) ProductJSONLD {
 	var imgUrls []string
 	for i := range p.Images {
-		imgUrls = append(imgUrls, fmt.Sprintf(constants.UrlBlogImage, p.Images[i].ID, p.Images[i].UpdatedAt.Format(time.RFC3339)))
+		imgUrls = append(imgUrls,
+			fmt.Sprintf(constants.UrlProductImage, p.Images[i].ID, p.Images[i].UpdatedAt.Format(time.RFC3339)),
+		)
 	}
 
 	aggrRating := getAggregateRating(p)

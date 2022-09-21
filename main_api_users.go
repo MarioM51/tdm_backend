@@ -59,7 +59,7 @@ func main() {
 	)
 
 	router.Static("/admin", "./public/admin-spa")
-	router.Static("/static", "./public/static")
+	router.Static(constants.StaticFolder, "./public/static_"+constants.StaticResourcesVersion)
 
 	//Setup Cors
 	router.Use(cors.New(cors.Config{
@@ -98,7 +98,7 @@ func main() {
 	product.AddSsrRoutes(router, &templates)
 	blog.AddSsrRoutes(router, &templates)
 	home.AddSsrRoutes(router, &templates)
-	router.HTMLRender = helpers.CreateHTMLRenderHelper(templates)
+	router.HTMLRender = helpers.CreateHTMLRenderHelper(templates, constants)
 
 	router.Run(constants.Domain + ":" + constants.Port)
 }

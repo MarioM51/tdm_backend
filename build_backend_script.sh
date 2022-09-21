@@ -59,7 +59,8 @@ if [ $env == "local" ]; then
   go build -v -o $dist_directory/$exe_filename $SCRIPTPATH
 fi
 
-echo "====== Coping templates"
+echo "====== Coping required files"
 cp -v -r $SCRIPTPATH/templates $dist_directory
+cp -v .env $dist_directory
 
 echo "=== backend building finish"

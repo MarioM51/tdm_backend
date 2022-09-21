@@ -1,17 +1,23 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-theme="light">
   <head>
     <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{block "title" .}}{{end}}</title>
-    <link href="/static/tailwin.css" rel="stylesheet" type="text/css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{block "title" .}}{{ end }}</title>
+    <link
+      href="{{StaticFolder}}/tailwin.css"
+      rel="stylesheet"
+      type="text/css"
+    />
 
     <style>
       :root {
         --max-screen: 1250px;
+        --t_styles: "{{StaticFolder}}/tailwin.css;"
       }
-      html, body {
+      html,
+      body {
         height: 100%;
         background-color: lightgrey;
       }
@@ -24,11 +30,9 @@
     </style>
   </head>
   <body>
+    <div class="root-container">{{block "content" .}} {{ end }}</div>
 
-  <div class="root-container">
-    {{block "content" .}} {{end}}
-  </div>
-
-  {{block "js" .}}{{end}}
-</body>
+    <script defer src="{{WebComponentsFolder}}/wc-layout.js"></script>
+    {{block "js" .}}{{ end }}
+  </body>
 </html>

@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"html/template"
+	"path"
 
 	"github.com/gin-gonic/gin/render"
 )
@@ -34,11 +35,27 @@ type TemplateModel struct {
 	PagePath   string
 }
 
-func CreateHTMLRenderHelper(tModels []TemplateModel) render.HTMLRender {
+func CreateHTMLRenderHelper(tModels []TemplateModel, consts Constants) render.HTMLRender {
 	r := &HTMLRenderHelper{}
 
+	myFuncs := template.FuncMap{
+		"StaticFolder": func() string {
+			return consts.StaticFolder
+		},
+		"WebComponentsFolder": func() string {
+			return consts.WebComponentsFolder
+		},
+	}
+
 	for _, tModel := range tModels {
-		r.add(tModel.Name, template.Must(template.ParseFiles(tModel.LayoutPath, tModel.PagePath)))
+		name := path.Base(tModel.LayoutPath)
+		myTemplate := template.New(name)
+		myTemplate.Funcs(myFuncs)
+		_, err := myTemplate.ParseFiles(tModel.LayoutPath, tModel.PagePath)
+		if err != nil {
+			panic(err)
+		}
+		r.add(tModel.Name, myTemplate)
 	}
 
 	return r
