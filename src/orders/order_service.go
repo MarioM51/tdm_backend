@@ -9,6 +9,24 @@ import (
 type OrderService struct {
 }
 
+const newOrderMessage = `<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	</head>
+	<body>
+		<p>Nueva orden agregada</p>
+	</body>
+</html>`
+
+const acceptedOrder = `<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+<body>
+	<p>Su pedido ha sido aceptado, siga los para pagar</p>
+</body>
+</html>`
+
 var orderRepo = OrderRepository{}
 var usrServ users.IUserService = users.UserService{}
 
@@ -52,11 +70,24 @@ func (OrderService) confirm(idOrder int, idUser uint) *Order {
 		orderRepo.updateField(idOrder, "id_user", idUser)
 	}
 
+	err := emailSender.SendEmail("test@sales.com", "Se agrego un nuevo pedido", newOrderMessage)
+	if err != nil {
+		logger.Print("Error email not sended: " + err.Error())
+	}
+
 	return confirmed
 }
 
 func (OrderService) accept(idOrder int, idUser uint) *Order {
+	user := usrServ.FindById(idUser)
+
 	accepted := orderRepo.updateField(idOrder, "accepted_at", time.Now())
+
+	err := emailSender.SendEmail(user.Email, "Pedido aceptado", acceptedOrder)
+	if err != nil {
+		logger.Print("Error email not sended: " + err.Error())
+	}
+
 	return accepted
 }
 

@@ -3,16 +3,12 @@ package orders
 import (
 	"net/http"
 	"users_api/src/errorss"
-	"users_api/src/helpers"
 
 	"github.com/gin-gonic/gin"
 )
 
 type OrderHandlerApi struct {
 }
-
-var apiHelper = helpers.ApiHelper{}
-var orderServ = OrderService{}
 
 func (OrderHandlerApi) save(c *gin.Context) {
 	defer apiHelper.HandleApiError(c)

@@ -1,15 +1,24 @@
 package orders
 
 import (
+	"log"
 	"users_api/src/helpers"
 
 	"github.com/gin-gonic/gin"
 )
 
 var dbHelper *helpers.DBHelper = nil
+var emailSender *helpers.EmailSender = nil
+var logger *log.Logger = nil
 
-func LinkDependencies(db *helpers.DBHelper) {
+//
+var apiHelper = helpers.ApiHelper{}
+var orderServ = OrderService{}
+
+func LinkDependencies(db *helpers.DBHelper, emailSenderIn *helpers.EmailSender, loggerIn *log.Logger) {
 	dbHelper = db
+	emailSender = emailSenderIn
+	logger = loggerIn
 }
 
 func AddApiRoutes(r *gin.Engine, prefix string) {

@@ -49,7 +49,11 @@ func (UserService) save(newUser UserModel) *UserModel {
 }
 
 func (UserService) FindById(id uint) *UserModel {
-	return userRepo.findUserById(id)
+	userFinded := userRepo.findUserById(id)
+	if userFinded == nil {
+		panic(errorss.ErrorResponseModel{HttpStatus: 404, Cause: "User not found"})
+	}
+	return userFinded
 }
 
 func (uServ UserService) update(newInfo *UserModel) *UserModel {

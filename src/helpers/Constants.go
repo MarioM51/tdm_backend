@@ -3,6 +3,7 @@ package helpers
 import (
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 )
@@ -19,6 +20,14 @@ type Constants struct {
 	StaticResourcesVersion string
 	StaticFolder           string
 	WebComponentsFolder    string
+	SMTP                   SMTPCredentials
+}
+
+type SMTPCredentials struct {
+	Host     string
+	Port     int
+	Username string
+	Password string
 }
 
 type DBCredentials struct {
@@ -57,6 +66,16 @@ func (c *Constants) LoadConstants() {
 	c.StaticResourcesVersion = os.Getenv("STATIC_FILES_VERSION")
 	c.StaticFolder = os.Getenv("STATIC_FOLDER")
 	c.WebComponentsFolder = os.Getenv("WEB_COMPONENTS_FOLDER")
+
+	c.SMTP.Host = os.Getenv("SMTP_HOST")
+	smtpPort, err := strconv.Atoi(os.Getenv("SMTP_PORT"))
+	if err != nil {
+		panic(err)
+	}
+	c.SMTP.Port = smtpPort
+	c.SMTP.Username = os.Getenv("SMTP_USERNAME")
+	c.SMTP.Password = os.Getenv("SMTP_PASSWORD")
+
 }
 
 func (c *Constants) IsProduction() bool {

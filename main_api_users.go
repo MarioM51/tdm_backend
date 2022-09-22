@@ -24,16 +24,18 @@ func main() {
 	constants.LoadConstants()
 
 	//Create module dependencies
-	dbHelper := &helpers.DBHelper{}
-	loggerPrinter := log.New(os.Stdout, "\r\n", log.LstdFlags)
+	logger := log.New(os.Stdout, "\r\n", log.LstdFlags)
 
-	dbHelper.Connect(constants, loggerPrinter)
+	dbHelper := &helpers.DBHelper{}
+	dbHelper.Connect(constants, logger)
+
+	var emailSender *helpers.EmailSender = helpers.NewEmailSender(constants)
 
 	//Pass dependencies to modules
 	users.LinkDependencies(dbHelper)
 	product.LinkDependencies(dbHelper, constants)
 	blog.LinkDependencies(dbHelper, constants)
-	orders.LinkDependencies(dbHelper)
+	orders.LinkDependencies(dbHelper, emailSender, logger)
 
 	if constants.IsLocal() {
 		gin.SetMode(gin.DebugMode)
