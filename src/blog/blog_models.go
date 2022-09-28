@@ -9,19 +9,20 @@ import (
 )
 
 type BlogModel struct {
-	Id             int           `json:"id"`
-	Title          string        `json:"title" gorm:"unique;not null"`
-	Body           string        `json:"body,omitempty" gorm:"not null"`
-	Thumbnail      string        `json:"thumbnail,omitempty"`
-	Author         string        `json:"author" gorm:"not null"`
-	Abstract       string        `json:"abstract" gorm:"not null;size:130"`
-	Likes          int           `json:"likes" gorm:"-:all"`
-	Comments       []BlogComment `json:"comment,omitempty" gorm:"-:all"`
-	CommentCount   int           `json:"commentCount" gorm:"-:all"`
-	CommentsRating float32       `json:"comments_rating" gorm:"-:all"`
-	CreatedAt      time.Time     `json:"created_at"`
-	UpdatedAt      time.Time     `json:"updated_at"`
-	OnHomeScreen   time.Time     `json:"onHomeScreen,omitempty"`
+	Id             int            `json:"id"`
+	Title          string         `json:"title" gorm:"unique;not null"`
+	Body           string         `json:"body,omitempty" gorm:"not null"`
+	Thumbnail      string         `json:"thumbnail,omitempty"`
+	Author         string         `json:"author" gorm:"not null"`
+	Abstract       string         `json:"abstract" gorm:"not null;size:130"`
+	Likes          int            `json:"likes" gorm:"-:all"`
+	Comments       []BlogComment  `json:"comment,omitempty" gorm:"-:all"`
+	CommentCount   int            `json:"commentCount" gorm:"-:all"`
+	CommentsRating float32        `json:"comments_rating" gorm:"-:all"`
+	CreatedAt      time.Time      `json:"created_at"`
+	UpdatedAt      time.Time      `json:"updated_at"`
+	OnHomeScreen   time.Time      `json:"onHomeScreen,omitempty"`
+	DeletedAt      gorm.DeletedAt `json:"-"`
 }
 
 func (BlogModel) TableName() string {
@@ -51,13 +52,14 @@ func (LikeBlog) TableName() string {
 }
 
 type BlogComment struct {
-	Id        int            `json:"identifier" gorm:"primaryKey"`
-	IdUser    int            `json:"idUser"`
-	IdBlog    int            `json:"IdBlog"`
-	Text      string         `json:"text"`
-	Rating    int            `json:"rating"`
-	CreatedAt time.Time      `json:"created_at"`
-	DeletedAt gorm.DeletedAt `json:"-"`
+	Id         int            `json:"identifier" gorm:"primaryKey"`
+	IdUser     int            `json:"idUser"`
+	IdBlog     int            `json:"IdBlog"`
+	Text       string         `json:"text"`
+	Rating     int            `json:"rating"`
+	CreatedAt  time.Time      `json:"created_at"`
+	DeletedAt  gorm.DeletedAt `json:"-"`
+	ResponseTo int            `json:"responseTo"`
 }
 
 func (BlogComment) TableName() string {

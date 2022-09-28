@@ -32,8 +32,10 @@ func AddApiRoutes(r *gin.Engine, prefix string) {
 	r.DELETE(prefix+"/products/:id/like", productApi.removeLike)
 
 	//comments
+	r.GET(prefix+"/products/comments", productApi.findAllComments)
 	r.POST(prefix+"/products/:id/comment", productApi.addComment)
 	r.DELETE(prefix+"/products/:id/comment/:idComment", productApi.deleteComment)
+	r.POST(prefix+"/products/:id/comment/:idComment", productApi.addResponse)
 }
 
 func AddSsrRoutes(r *gin.Engine, tModels *[]helpers.TemplateModel) {

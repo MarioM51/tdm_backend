@@ -144,6 +144,7 @@ type CommentJSONLD struct {
 	DatePublished string       `json:"datePublished"`
 	ReviewRating  ReviewRating `json:"reviewRating"`
 	Author        Author       `json:"author"`
+	ResponseTo    int          `json:"responseTo"`
 }
 
 type Author struct {
@@ -185,6 +186,7 @@ func fromComment(c Comment) CommentJSONLD {
 		IdUser:        c.IdUser,
 		Text:          c.Content,
 		DatePublished: c.CreatedAt.String(),
+		ResponseTo:    c.ResponseTo,
 	}
 	return reviewTemp
 }

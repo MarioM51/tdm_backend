@@ -141,3 +141,17 @@ func (bs ProductService) deleteComment(toDel Comment) Comment {
 
 	return *finded
 }
+
+func (bs ProductService) addResponse(responseReceived *Comment) {
+	bs.findById(responseReceived.IdTarget)
+
+	usrServ.FindById(uint(responseReceived.IdUser))
+
+	productDao.addResponse(responseReceived)
+
+}
+
+func (bs ProductService) findAllComments() *[]Comment {
+	all := productDao.findAllComments()
+	return all
+}

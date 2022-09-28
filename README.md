@@ -201,11 +201,24 @@ curl 'http://192.168.1.81/api/products/image/3' \
 
 - The id user is get from the token
 
+1, Add comment to product
+
 ```r
 curl http://192.168.1.81:80/api/products/1/comment \
   --request "POST" \
   --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTg5ODYwNTcsImp0aSI6Ijc5In0.QK0ltvGbTp5V3PoZj-gUiFjHGOPiGYu8n1YU83J1fNQ" \
-  --data '{ "IdBlog": 1, "text": "First comment", "rating": 3 }'
+  --data '{ "IdProduct": 1, "content": "First comment", "rating": 3 }'
+```
+
+1,1 Add response to a product
+
+- required response_to
+
+```r
+curl http://192.168.1.81:80/api/products/13/comment/14 \
+  --request "POST" \
+  --data '{ "content": "First response to product 13 to comment 14" }' \
+  --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NjQwNjA2NjUsImp0aSI6Ijc5In0.QdLuY-6vWwMYUeeHYkNiFRrHS9RxkDKyiW1i79aorf8"
 ```
 
 2, Delete comment
@@ -214,6 +227,15 @@ curl http://192.168.1.81:80/api/products/1/comment \
 curl http://192.168.1.81:80/api/products/1/comment/9 \
   --request "DELETE" \
   --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTg5ODYwNTcsImp0aSI6Ijc5In0.QK0ltvGbTp5V3PoZj-gUiFjHGOPiGYu8n1YU83J1fNQ"
+```
+
+3, Get all comments
+
+```r
+curl http://192.168.1.81:80/api/products/comments \
+  --request "GET" \
+  --header "Token:  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NjQwODUzMjQsImp0aSI6Ijc5In0.zLsCmrWSWYxOUFVY1Z5k4ssY27h17jXNMWl4pltlW2Y"
+  
 ```
 
 ### API blogs
@@ -333,6 +355,17 @@ curl http://192.168.1.81:80/api/blogs/1/comment \
 curl http://192.168.1.81:80/api/blogs/1/comment/9 \
   --request "DELETE" \
   --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTg5ODYwNTcsImp0aSI6Ijc5In0.QK0ltvGbTp5V3PoZj-gUiFjHGOPiGYu8n1YU83J1fNQ"
+```
+
+3, Add response to comment of blog
+
+- required response_to
+
+```r
+curl http://192.168.1.81:80/api/blogs/13/comment/14 \
+  --request "POST" \
+  --data '{ "content": "First response to product 13 to comment 14" }' \
+  --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NjQwNjA2NjUsImp0aSI6Ijc5In0.QdLuY-6vWwMYUeeHYkNiFRrHS9RxkDKyiW1i79aorf8"
 ```
 
 ### API Orders

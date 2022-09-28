@@ -43,6 +43,9 @@ func (pr ProductRepository) getCommentRatingAndCount(product ProductModel, comme
 	var total int = 0
 	for j := range comments {
 		total = total + comments[j].Stars
+		if comments[j].ResponseTo > 0 {
+			count--
+		}
 	}
 
 	if total == 0 && count == 0 {
@@ -223,9 +226,39 @@ func (ProductRepository) findProductComment(idComment int) (finded *Comment) {
 	return finded
 }
 
-func (ProductRepository) deleteComment(idComment int) {
+func (pr ProductRepository) deleteComment(idComment int) {
 	tx := dbHelper.DB.Delete(&Comment{}, idComment)
 	if tx.Error != nil {
 		panic(errorss.ErrorResponseModel{HttpStatus: 500, Cause: "Error deleting product comment"})
 	}
+
+	pr.deleteResponsesOfComment(idComment)
+}
+
+func (ProductRepository) deleteResponsesOfComment(idComment int) {
+	responsesOfComment := []Comment{}
+	tx := dbHelper.DB.Where("response_to = ?", idComment).Find(&responsesOfComment)
+	if tx.Error != nil {
+		panic(errorss.ErrorResponseModel{HttpStatus: 500, Cause: "Error finding responses of product comment"})
+	}
+
+	tx2 := dbHelper.DB.Delete(&responsesOfComment)
+	if tx2.Error != nil {
+		panic(errorss.ErrorResponseModel{HttpStatus: 500, Cause: "Error deleting responses of product comment"})
+	}
+}
+
+func (ProductRepository) addResponse(responseReceived *Comment) {
+	tx := dbHelper.DB.Create(&responseReceived)
+	if tx.Error != nil {
+		panic(errorss.ErrorResponseModel{HttpStatus: 500, Cause: "Error saving response comment product"})
+	}
+}
+
+func (ProductRepository) findAllComments() (all *[]Comment) {
+	tx := dbHelper.DB.Order("created_at").Find(&all)
+	if tx.Error != nil {
+		panic(errorss.ErrorResponseModel{HttpStatus: 500, Cause: "Error getting all comments"})
+	}
+	return all
 }

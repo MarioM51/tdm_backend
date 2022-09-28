@@ -17,6 +17,7 @@ type IBlogService interface {
 
 	addComment(toAdd BlogComment) BlogComment
 	deleteComment(toDel BlogComment) BlogComment
+	addCommentResponse(toAdd *BlogComment)
 }
 
 type BlogService struct {
@@ -127,4 +128,13 @@ func (bs BlogService) deleteComment(toDel BlogComment) BlogComment {
 	blogRepo.deleteComment(toDel.Id)
 
 	return *finded
+}
+
+func (bs BlogService) addCommentResponse(newResponse *BlogComment) {
+	bs.findById(newResponse.IdBlog)
+
+	usrServ.FindById(uint(newResponse.IdUser))
+
+	blogRepo.addComment(*newResponse)
+
 }

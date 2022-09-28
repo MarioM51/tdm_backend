@@ -18,18 +18,24 @@ func AddApiRoutes(r *gin.Engine, prefix string) {
 
 	var blogHandler IBlogHandler = BlogHandler{}
 
+	//CRUD
 	r.GET(prefix+"/blogs", blogHandler.findAll)
 	r.GET(prefix+"/blogs/:id", blogHandler.findById)
-	r.GET(prefix+"/blogs/:id/image", blogHandler.showThumbnail)
 	r.POST(prefix+"/blogs", blogHandler.save)
 	r.PUT(prefix+"/blogs", blogHandler.update)
 	r.DELETE(prefix+"/blogs/:id", blogHandler.deleteById)
 
+	//images
+	r.GET(prefix+"/blogs/:id/image", blogHandler.showThumbnail)
+
+	//likes
 	r.POST(prefix+"/blogs/:id/like", blogHandler.addLike)
 	r.DELETE(prefix+"/blogs/:id/like", blogHandler.removeLike)
 
+	//comments
 	r.POST(prefix+"/blogs/:id/comment", blogHandler.addComment)
 	r.DELETE(prefix+"/blogs/:id/comment/:idComment", blogHandler.deleteComment)
+	r.POST(prefix+"/blogs/:id/comment/:idComment", blogHandler.addCommentResponse)
 
 }
 

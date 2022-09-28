@@ -24,6 +24,8 @@ type IProductApiHadler interface {
 
 	deleteComment(c *gin.Context)
 	addComment(c *gin.Context)
+	addResponse(c *gin.Context)
+	findAllComments(c *gin.Context)
 }
 
 type ProductApiHadler struct {
@@ -161,6 +163,15 @@ func showProduct(c *gin.Context, p *ProductModel) {
 	}
 }
 
+func (pah ProductApiHadler) bindComment(c *gin.Context) Comment {
+	commentReceived := Comment{}
+	if err := c.BindJSON(&commentReceived); err != nil {
+		panic(&errorss.ErrorResponseModel{HttpStatus: 400, Cause: "bad format of product comment"})
+	}
+
+	return commentReceived
+}
+
 // likes
 
 func (ProductApiHadler) addLike(c *gin.Context) {
@@ -189,19 +200,16 @@ func (ProductApiHadler) removeLike(c *gin.Context) {
 
 //Comments ============================
 
-func (ProductApiHadler) addComment(c *gin.Context) {
+func (pah ProductApiHadler) addComment(c *gin.Context) {
 	defer apiHelper.HandleApiError(c)
 
 	token := apiHelper.GetRequiredToken(c)
 	idTarget := apiHelper.GetIntParam(c, "id")
 
-	commentReceived := Comment{}
-	if err := c.BindJSON(&commentReceived); err != nil {
-		panic(errorss.ErrorResponseModel{HttpStatus: 400, Cause: "bad format of product comment"})
-	}
-
+	commentReceived := pah.bindComment(c)
 	commentReceived.IdTarget = idTarget
 	commentReceived.IdUser = int(token.IdUser)
+	commentReceived.cleanAndValidateNewComment(false)
 
 	commentAdded := productServ.addComment(commentReceived)
 
@@ -227,4 +235,35 @@ func (ProductApiHadler) deleteComment(c *gin.Context) {
 
 	commentDeleted := productServ.deleteComment(commentToDelete)
 	c.JSON(http.StatusOK, commentDeleted)
+}
+
+func (pah ProductApiHadler) addResponse(c *gin.Context) {
+	defer apiHelper.HandleApiError(c)
+
+	token := apiHelper.GetRequiredToken(c)
+	idTarget := apiHelper.GetIntParam(c, "id")
+	idComment := apiHelper.GetIntParam(c, "idComment")
+
+	responseReceived := pah.bindComment(c)
+	responseReceived.IdUser = int(token.IdUser)
+	responseReceived.IdTarget = idTarget
+	responseReceived.ResponseTo = idComment
+	responseReceived.cleanAndValidateNewComment(true)
+
+	productServ.addResponse(&responseReceived)
+
+	c.JSON(http.StatusOK, responseReceived)
+}
+
+func (pah ProductApiHadler) findAllComments(c *gin.Context) {
+	defer apiHelper.HandleApiError(c)
+
+	token := apiHelper.GetRequiredToken(c)
+	if !usrServ.CheckRol([]string{"products", "admin"}, token) {
+		panic(errorss.UnAuthUser)
+	}
+
+	allComments := productServ.findAllComments()
+
+	c.JSON(http.StatusOK, allComments)
 }
