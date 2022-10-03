@@ -33,6 +33,7 @@ func AddApiRoutes(r *gin.Engine, prefix string) {
 	r.DELETE(prefix+"/blogs/:id/like", blogHandler.removeLike)
 
 	//comments
+	r.GET(prefix+"/blogs/comments", blogHandler.findAllComments)
 	r.POST(prefix+"/blogs/:id/comment", blogHandler.addComment)
 	r.DELETE(prefix+"/blogs/:id/comment/:idComment", blogHandler.deleteComment)
 	r.POST(prefix+"/blogs/:id/comment/:idComment", blogHandler.addCommentResponse)

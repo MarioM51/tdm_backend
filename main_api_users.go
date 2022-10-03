@@ -47,14 +47,22 @@ func main() {
 
 	router := gin.Default()
 	gin.DisableConsoleColor()
-	router.Use(gzip.DefaultHandler().Gin)
+	//router.Use(gzip.DefaultHandler().Gin)
 	gin.DefaultWriter = os.Stdout
 
 	//Setup static server
 	router.Use(func() gin.HandlerFunc {
 		return func(c *gin.Context) {
-			if strings.HasPrefix(c.Request.URL.Path, "/admin") || strings.HasPrefix(c.Request.URL.Path, "/static") {
+			path := c.Request.URL.Path
+			isAdminSPA := strings.HasPrefix(path, "/admin")
+			isStaticResources := strings.HasPrefix(path, "/static")
+			isOutOfAPI := !strings.HasPrefix(path, "/api")
+
+			if isAdminSPA || isStaticResources {
+				gzip.DefaultHandler().Gin(c)
 				c.Writer.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
+			} else if isOutOfAPI {
+				gzip.DefaultHandler().Gin(c)
 			}
 		}
 	}(),

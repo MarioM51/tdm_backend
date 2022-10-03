@@ -345,7 +345,7 @@ Only logged user can comment.
 ```r
 curl http://192.168.1.81:80/api/blogs/1/comment \
   --request "POST" \
-  --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTg5ODYwNTcsImp0aSI6Ijc5In0.QK0ltvGbTp5V3PoZj-gUiFjHGOPiGYu8n1YU83J1fNQ" \
+  --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NjQ2NjM0OTgsImp0aSI6Ijc5In0.HP_e5OEEkWB4qJMxi2GUqboyoi912JXS_kdDzvYQwzo" \
   --data '{ "IdBlog": 1, "text": "First comment", "rating": 3 }'
 ```
 

@@ -256,7 +256,7 @@ func (ProductRepository) addResponse(responseReceived *Comment) {
 }
 
 func (ProductRepository) findAllComments() (all *[]Comment) {
-	tx := dbHelper.DB.Order("created_at").Find(&all)
+	tx := dbHelper.DB.Order("created_at DESC").Order("created_at").Find(&all)
 	if tx.Error != nil {
 		panic(errorss.ErrorResponseModel{HttpStatus: 500, Cause: "Error getting all comments"})
 	}

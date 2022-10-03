@@ -21,6 +21,7 @@ type IBlogHandler interface {
 	addLike(c *gin.Context)
 	removeLike(c *gin.Context)
 
+	findAllComments(c *gin.Context)
 	addComment(c *gin.Context)
 	deleteComment(c *gin.Context)
 	addCommentResponse(c *gin.Context)
@@ -108,11 +109,13 @@ func getBlogFromRequest(c *gin.Context) (b *BlogModel) {
 	return b
 }
 
-func (BlogHandler) getBlogCommentResponse(c *gin.Context) (bc *BlogComment) {
-	if err := c.BindJSON(bc); err != nil {
+func (BlogHandler) getBlogCommentResponse(c *gin.Context) *BlogComment {
+	bc := BlogComment{}
+	if err := c.BindJSON(&bc); err != nil {
+		println(err.Error())
 		panic(errorss.ErrorResponseModel{HttpStatus: 400, Cause: "bad format of blog comment"})
 	}
-	return bc
+	return &bc
 }
 
 func showBlog(c *gin.Context, p *BlogModel) {
@@ -202,5 +205,12 @@ func (bh BlogHandler) addCommentResponse(c *gin.Context) {
 	responseReceived.ResponseTo = apiHelper.GetIntParam(c, "idComment")
 
 	blogS.addCommentResponse(responseReceived)
+	c.JSON(http.StatusOK, responseReceived)
 
+}
+
+func (bh BlogHandler) findAllComments(c *gin.Context) {
+	defer apiHelper.HandleApiError(c)
+	allComments := blogS.findAllComments()
+	c.JSON(http.StatusOK, allComments)
 }

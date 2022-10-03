@@ -59,7 +59,7 @@ type BlogComment struct {
 	Rating     int            `json:"rating"`
 	CreatedAt  time.Time      `json:"created_at"`
 	DeletedAt  gorm.DeletedAt `json:"-"`
-	ResponseTo int            `json:"responseTo"`
+	ResponseTo int            `json:"responseTo" gorm:"default:null"`
 }
 
 func (BlogComment) TableName() string {
@@ -93,6 +93,7 @@ type CommentJSONLD struct {
 	Text          string       `json:"text"`
 	DatePublished string       `json:"datePublished"`
 	ReviewRating  ReviewRating `json:"reviewRating"`
+	ResponseTo    int          `json:"responseTo"`
 }
 
 func (b BlogComment) toJsonLD() CommentJSONLD {
@@ -102,6 +103,7 @@ func (b BlogComment) toJsonLD() CommentJSONLD {
 		IdUser:        b.IdUser,
 		Text:          b.Text,
 		DatePublished: b.CreatedAt.Format(time.RFC3339),
+		ResponseTo:    b.ResponseTo,
 		ReviewRating: ReviewRating{
 			Type:        "Rating",
 			BestRating:  5,

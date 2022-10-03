@@ -15,6 +15,7 @@ type IBlogService interface {
 	addLike(idBlog int, IdUser int) int
 	removeLike(idBlog int, IdUser int) int
 
+	findAllComments() []BlogComment
 	addComment(toAdd BlogComment) BlogComment
 	deleteComment(toDel BlogComment) BlogComment
 	addCommentResponse(toAdd *BlogComment)
@@ -116,16 +117,16 @@ func (bs BlogService) deleteComment(toDel BlogComment) BlogComment {
 
 	finded := blogRepo.findBlogComment(toDel.Id)
 	if finded == nil {
-		panic(errorss.ErrorResponseModel{HttpStatus: 500, Cause: "Error deleting blog comment"})
+		panic(errorss.ErrorResponseModel{HttpStatus: 500, Cause: "Comentario a eliminar no encontrado"})
 	}
 
 	if toDel.IdUser != 666777 {
 		if finded.IdUser != toDel.IdUser {
-			panic(errorss.ErrorResponseModel{HttpStatus: 403, Cause: "The comment doesn`t belong to the user"})
+			panic(errorss.ErrorResponseModel{HttpStatus: 403, Cause: "Sin permiso para eliminar el comentario"})
 		}
 	}
 
-	blogRepo.deleteComment(toDel.Id)
+	blogRepo.deleteComment(finded)
 
 	return *finded
 }
@@ -136,5 +137,12 @@ func (bs BlogService) addCommentResponse(newResponse *BlogComment) {
 	usrServ.FindById(uint(newResponse.IdUser))
 
 	blogRepo.addComment(*newResponse)
+
+}
+
+func (bs BlogService) findAllComments() []BlogComment {
+	allComments := blogRepo.findAllComments()
+
+	return allComments
 
 }

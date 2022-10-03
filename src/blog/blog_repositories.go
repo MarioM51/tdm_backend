@@ -16,9 +16,10 @@ type IBlogRepository interface {
 	addLike(idBlog int, iduser int) int
 	removeLike(idProduct int, idUser int) int
 
+	findAllComments() []BlogComment
 	findBlogComment(idComment int) *BlogComment
 	addComment(toAdd BlogComment) BlogComment
-	deleteComment(idComment int)
+	deleteComment(toDel *BlogComment)
 }
 
 type BlogRepository struct {
@@ -177,9 +178,35 @@ func (BlogRepository) findBlogComment(idComment int) (finded *BlogComment) {
 	return finded
 }
 
-func (BlogRepository) deleteComment(idComment int) {
-	tx := dbHelper.DB.Delete(&BlogComment{}, idComment)
+func (br BlogRepository) deleteComment(toDel *BlogComment) {
+	tx := dbHelper.DB.Delete(&toDel)
 	if tx.Error != nil {
 		panic(errorss.ErrorResponseModel{HttpStatus: 500, Cause: "Error deleting blog comment"})
 	}
+
+	if toDel.ResponseTo == 0 {
+		br.deleteResponsesOfComment(toDel.Id)
+	}
+}
+
+func (BlogRepository) deleteResponsesOfComment(idComment int) {
+	responsesOfComment := []BlogComment{}
+	tx := dbHelper.DB.Where("response_to = ?", idComment).Find(&responsesOfComment)
+	if tx.Error != nil {
+		panic(errorss.ErrorResponseModel{HttpStatus: 500, Cause: "Error finding responses of product comment"})
+	}
+
+	tx2 := dbHelper.DB.Delete(&responsesOfComment)
+	if tx2.Error != nil {
+		panic(errorss.ErrorResponseModel{HttpStatus: 500, Cause: "Error deleting responses of product comment"})
+	}
+}
+
+func (BlogRepository) findAllComments() []BlogComment {
+	all := []BlogComment{}
+	tx := dbHelper.DB.Order("created_at DESC").Find(&all)
+	if tx.Error != nil {
+		panic(errorss.ErrorResponseModel{HttpStatus: 500, Cause: "Error finding all blog comments"})
+	}
+	return all
 }
