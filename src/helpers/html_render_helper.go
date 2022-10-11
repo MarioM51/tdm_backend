@@ -39,11 +39,8 @@ func CreateHTMLRenderHelper(tModels []TemplateModel, consts Constants) render.HT
 	r := &HTMLRenderHelper{}
 
 	myFuncs := template.FuncMap{
-		"StaticFolder": func() string {
-			return consts.StaticFolder
-		},
-		"WebComponentsFolder": func() string {
-			return consts.WebComponentsFolder
+		"Constants": func() Constants {
+			return consts
 		},
 	}
 

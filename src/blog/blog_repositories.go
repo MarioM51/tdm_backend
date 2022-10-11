@@ -47,6 +47,9 @@ func (br BlogRepository) findAll(filter string) *[]BlogModel {
 		var total int = 0
 		for j := range comments {
 			total = total + comments[j].Rating
+			if comments[j].ResponseTo > 0 {
+				commentsAmount--
+			}
 		}
 
 		if total == 0 && commentsAmount == 0 {

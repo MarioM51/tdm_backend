@@ -23,6 +23,12 @@ if [ "$env" == "null" ]; then
   exit 1
 fi
 
+#repited in build_dist_folder.sh
+if ! [[ $env == "test" || $env == "local" ]]; then
+  echo "--env: must be test or local, but it was $env"
+  exit 1
+fi
+
 if [ "$exe_filename" == "null" ]; then
   echo "--exe_filename: name of .exe result"
   exit 1
@@ -62,5 +68,6 @@ fi
 echo "====== Coping required files"
 cp -v -r $SCRIPTPATH/templates $dist_directory
 cp -v .env $dist_directory
+cp -v -r data/ $dist_directory
 
 echo "=== backend building finish"

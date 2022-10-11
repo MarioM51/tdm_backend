@@ -1,6 +1,4 @@
-{{define "title"}}
-Tienda de Mario
-{{ end }}
+{{define "title"}}Home{{ end }}
 
 {{define "content"}}
 <script id="blogs_jsonld" type="application/ld+json">
@@ -10,11 +8,15 @@ Tienda de Mario
   {{.PRODUCTS_JSONLD}}
 </script>
 
+<script id="localbus_jsonld" type="application/ld+json">
+  {{.LOCALBUS_JSONLD}}
+</script>
+
 <wc-layout>
   <wc-home id="content-page"></wc-home>
 </wc-layout>
 {{ end }}
 
 {{define "js"}}
-<script defer src="{{WebComponentsFolder}}/wc-home.js"></script>
+<script defer src="{{Constants.WebComponentsFolder}}/wc-home.js"></script>
 {{ end }}

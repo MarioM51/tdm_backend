@@ -1,0 +1,52 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Store",
+  "image": [
+    "https://example.com/photos/1x1/photo.jpg",
+    "https://example.com/photos/4x3/photo.jpg",
+    "https://example.com/photos/16x9/photo.jpg"
+  ],
+  "name": "Tienda De Mario",
+  "founder": "Mario Marquez V.",
+  "keywords": "tlaxco, tlaxcala, artesanias",
+  "description": "tienda online de productos producidos en tlaxco",
+  "url": "",
+  "telephone": "556-748-76-00",
+  "email": "mario51marquez@gmail.com",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Gabriel M. Hernandez #12",
+    "addressLocality": "Tlaxco, Tlaxcala, Centro",
+    "addressRegion": "TL",
+    "postalCode": "90250",
+    "addressCountry": "MX"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 19.6157799,
+    "longitude": -98.1207554
+  },
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ],
+      "opens": "09:00",
+      "closes": "19:00"
+    },
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": [
+        "Saturday",
+        "Sunday"
+      ],
+      "opens": "09:00",
+      "closes": "15:00"
+    }
+  ]
+}

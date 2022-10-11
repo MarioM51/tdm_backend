@@ -11,6 +11,14 @@ import (
 var apiHelper = helpers.ApiHelper{}
 var productServ = product.ProductService{}
 var blogS blog.IBlogService = blog.BlogService{}
+var localInfoLDJson = LocalBusinessLDJSON{}
+var constants *helpers.Constants
+
+func LinkDependencies(constantsIn *helpers.Constants) {
+	constants = constantsIn
+	localInfoLDJson.readFromLocalFile(&localInfoLDJson)
+	constantsIn.SiteName = localInfoLDJson.Name
+}
 
 func AddSsrRoutes(r *gin.Engine, tModels *[]helpers.TemplateModel) {
 	homeSSRHandler := HomeSSRHandler{}

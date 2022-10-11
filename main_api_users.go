@@ -35,7 +35,8 @@ func main() {
 	users.LinkDependencies(dbHelper)
 	product.LinkDependencies(dbHelper, constants)
 	blog.LinkDependencies(dbHelper, constants)
-	orders.LinkDependencies(dbHelper, emailSender, logger)
+	orders.LinkDependencies(dbHelper, emailSender, logger, constants)
+	home.LinkDependencies(&constants)
 
 	if constants.IsLocal() {
 		gin.SetMode(gin.DebugMode)
@@ -55,12 +56,13 @@ func main() {
 		return func(c *gin.Context) {
 			path := c.Request.URL.Path
 			isAdminSPA := strings.HasPrefix(path, "/admin")
-			isStaticResources := strings.HasPrefix(path, "/static")
+			isStaticResources := strings.HasPrefix(path, "/static_"+constants.StaticResourcesVersion)
 			isOutOfAPI := !strings.HasPrefix(path, "/api")
 
 			if isAdminSPA || isStaticResources {
-				gzip.DefaultHandler().Gin(c)
+				//keep first the header adds and then the setup of gzip, otherwise the headers will be deleted
 				c.Writer.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
+				gzip.DefaultHandler().Gin(c)
 			} else if isOutOfAPI {
 				gzip.DefaultHandler().Gin(c)
 			}

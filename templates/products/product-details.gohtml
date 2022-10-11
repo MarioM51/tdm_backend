@@ -1,8 +1,6 @@
 {{template "base" .}}
 
-{{define "title"}}
-{{.PRODUCT.Name}} - Mi Tienda
-{{ end }}
+{{define "title"}}{{.PRODUCT.Name}}{{ end }}
 
 {{define "content"}}
 <script id="product_ld_json" type="application/ld+json">
@@ -16,6 +14,6 @@
 {{define "js"}}
 <script
   defer
-  src="{{WebComponentsFolder}}/wc-product-client-details.js"
+  src="{{Constants.WebComponentsFolder}}/wc-product-client-details.js"
 ></script>
 {{ end }}

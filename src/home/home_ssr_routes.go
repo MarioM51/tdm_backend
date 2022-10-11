@@ -25,6 +25,7 @@ func (HomeSSRHandler) home(c *gin.Context) {
 		gin.H{
 			"PRODUCTS_JSONLD": allProductsJSONLD.Val,
 			"BLOGS_JSONLD":    allBlogsJSONLD.Val,
+			"LOCALBUS_JSONLD": localInfoLDJson,
 		})
 
 }

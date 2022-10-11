@@ -108,6 +108,12 @@ func (OrderHandlerApi) findByUserLogged(c *gin.Context) {
 	showOrders(c, orderFinded)
 }
 
+func (OrderHandlerApi) getPaymentInfo(c *gin.Context) {
+	defer apiHelper.HandleApiError(c)
+	apiHelper.GetRequiredToken(c)
+	c.JSON(200, constants.PaymentInfo)
+}
+
 //==========
 
 func getOrderFromRequest(c *gin.Context) (o *Order) {

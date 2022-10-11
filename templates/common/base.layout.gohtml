@@ -4,17 +4,18 @@
     <!-- Required meta tags -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{{block "title" .}}{{ end }}</title>
+    <link rel="icon" type="image/x-icon" href="{{Constants.StaticFolder}}/favicon.ico">
+    <title>{{block "title" .}}{{ end }} - {{Constants.SiteName}}</title>
     <link
-      href="{{StaticFolder}}/tailwin.css"
-      rel="stylesheet"
-      type="text/css"
+      href="{{Constants.StaticFolder}}/tailwin.css"
+      rel="preload"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'"
     />
 
     <style>
       :root {
         --max-screen: 1250px;
-        --t_styles: "{{StaticFolder}}/tailwin.css;"
       }
       html,
       body {
@@ -32,7 +33,7 @@
   <body>
     <div class="root-container">{{block "content" .}} {{ end }}</div>
 
-    <script defer src="{{WebComponentsFolder}}/wc-layout.js"></script>
+    <script defer src="{{Constants.WebComponentsFolder}}/wc-layout.js"></script>
     {{block "js" .}}{{ end }}
   </body>
 </html>

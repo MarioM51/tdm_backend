@@ -436,6 +436,15 @@ curl http://192.168.1.81:80/api/orders/findByUserLogged \
   | json_pp
 ```
 
+7, get info payment
+
+```r
+curl http://192.168.1.81:80/api/orders/paymentInfo \
+  --request "GET" \
+  --header "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NjUwMDQ1OTgsImp0aSI6Ijc5In0.V9xqyLx1tuDkmmVsNuRMj8FfwcVcTmJnKGX9PePMe_4" \
+  | json_pp
+```
+
 ## SSR (Server side render)
 
 ### Products
